@@ -1,0 +1,21 @@
+- 2025-09-26T14:05:03-04:00 — Testing MCP tools to verify they work
+- 2025-09-26T14:09:46-04:00 — MCP Tools Testing Report - Comprehensive Analysis
+- 2025-09-26T14:10:00-04:00 — Created comprehensive MCP testing report documenting 4 working tools and 5 tools with issues
+  - files: MCP_TESTING_REPORT.md
+- 2025-09-26T14:12:34-04:00 — FIXED: goals_update tool is actually working correctly - issue was with MCP client parameter validation, not the tool itself
+  - files: MCP_TESTING_REPORT.md
+- 2025-09-26T14:17:50-04:00 — Added new goal: Implement markdown linting tool for consistent formatting validation
+  - files: goals
+- 2025-09-26T14:18:44-04:00 — Starting comprehensive MCP testing report - Round 2
+- 2025-09-26T14:19:06-04:00 — MCP Testing Report Round 2 - Comprehensive tool validation completed
+- 2025-09-26T14:19:36-04:00 — Created comprehensive MCP testing report Round 2 - 7/9 tools working (78% success rate)
+  - files: MCP_TESTING_REPORT_ROUND2.md
+- 2025-09-26T14:22:41-04:00 — Fixed repo_search tool - removed problematic jsonschema tag causing validation issues
+  - files: main.go
+- 2025-09-26T14:26:15-04:00 — Fixed ci_last_failure tool - added dummy random_string parameter to satisfy MCP client validation
+  - files: main.go
+- 2025-09-26T14:30:17-04:00 — Implemented markdown_lint MCP tool with auto-fix functionality and custom configuration
+  - files: main.go, .markdownlint.json
+- 2025-09-26T14:41:35-04:00 — Research phase: Go markdown libraries and advanced correction methods for markdown tools
+- 2025-09-26T14:44:04-04:00 — Implemented comprehensive markdown template system with 6 new MCP tools and database schema
+  - files: schema.sql, main.go, MARKDOWN_TOOLS_RESEARCH.md

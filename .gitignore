@@ -1,0 +1,27 @@
+# Binaries
+mcp-server
+mcp-server-*
+*.exe
+
+# Database
+*.db
+*.db-shm
+*.db-wal
+.agent/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Temporary files
+tmp/
+temp/
