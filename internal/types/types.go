@@ -380,3 +380,60 @@ type SetupMCPToolsOutput struct {
 	FilesCreated []string `json:"files_created" jsonschema:"List of files created"`
 	Message      string   `json:"message" jsonschema:"Setup result message"`
 }
+
+// Log parsing inputs and outputs
+type LogParseInput struct {
+	FilePath string `json:"file_path,omitempty" jsonschema:"Path to log file (optional, auto-detects if not provided)"`
+	Format   string `json:"format,omitempty" jsonschema:"Output format: json, summary, detailed, ai-friendly (default: ai-friendly)"`
+}
+
+type LogParseOutput struct {
+	File            string          `json:"file" jsonschema:"Log file name"`
+	AnalysisTime    string          `json:"analysis_time" jsonschema:"When the analysis was performed"`
+	Statistics      FileStatistics  `json:"statistics" jsonschema:"Basic file statistics"`
+	ErrorCounts     ErrorCounts     `json:"error_counts" jsonschema:"Counts of different error types"`
+	CriticalIssues  CriticalIssues  `json:"critical_issues" jsonschema:"Critical problems requiring immediate attention"`
+	ErrorPatterns   []ErrorPattern  `json:"error_patterns" jsonschema:"Detailed error pattern analysis"`
+	RecentErrors    []string        `json:"recent_errors" jsonschema:"Most recent error messages"`
+	MissingFiles    []string        `json:"missing_files" jsonschema:"Files that were referenced but not found"`
+	Recommendations []string        `json:"recommendations" jsonschema:"Priority-based recommendations for fixing issues"`
+	Context         AnalysisContext `json:"context" jsonschema:"Context information for AI analysis"`
+}
+
+type FileStatistics struct {
+	Lines    int    `json:"lines" jsonschema:"Total number of lines in the log file"`
+	Size     string `json:"size" jsonschema:"Human-readable file size"`
+	Modified string `json:"modified" jsonschema:"File modification date"`
+}
+
+type ErrorCounts struct {
+	NetworkIssues    int `json:"network_issues" jsonschema:"Internet connectivity failures"`
+	FileErrors       int `json:"file_errors" jsonschema:"Missing files and file system errors"`
+	MemoryLeaks      int `json:"memory_leaks" jsonschema:"Potential listener leaks"`
+	ComposerErrors   int `json:"composer_errors" jsonschema:"Composer context errors"`
+	MCPErrors        int `json:"mcp_errors" jsonschema:"MCP server-related issues"`
+	JavaScriptErrors int `json:"javascript_errors" jsonschema:"JavaScript type, reference, and syntax errors"`
+	PermissionErrors int `json:"permission_errors" jsonschema:"Access denied and permission issues"`
+	ConnectionErrors int `json:"connection_errors" jsonschema:"Connection refused and timeout errors"`
+}
+
+type CriticalIssues struct {
+	DiskSpace        int `json:"disk_space" jsonschema:"Disk space errors (ENOSPC)"`
+	SyntaxErrors     int `json:"syntax_errors" jsonschema:"JavaScript syntax errors"`
+	PermissionDenied int `json:"permission_denied" jsonschema:"Permission denied errors"`
+}
+
+type ErrorPattern struct {
+	Pattern     string   `json:"pattern" jsonschema:"Regex pattern that matched"`
+	Description string   `json:"description" jsonschema:"Human-readable description of the error"`
+	Severity    string   `json:"severity" jsonschema:"Severity level: low, medium, high, critical"`
+	Count       int      `json:"count" jsonschema:"Number of occurrences"`
+	Recent      []string `json:"recent" jsonschema:"Recent examples of this error"`
+}
+
+type AnalysisContext struct {
+	TotalErrors     int    `json:"total_errors" jsonschema:"Total number of errors found"`
+	MostCommonIssue string `json:"most_common_issue" jsonschema:"Description of the most frequent issue"`
+	SeverityLevel   string `json:"severity_level" jsonschema:"Overall severity assessment"`
+	Environment     string `json:"environment" jsonschema:"Development environment assessment"`
+}

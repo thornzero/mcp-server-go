@@ -18,31 +18,8 @@ build:
 	go build -o $(BUILD_DIR)/$(BINARY_NAME) $(MAIN_PACKAGE)
 	@echo "Build complete: $(BUILD_DIR)/$(BINARY_NAME)"
 
-# Build setup tool
-.PHONY: build-setup
-build-setup:
-	@echo "Building MCP setup tool..."
-	@mkdir -p $(BUILD_DIR)
-	go build -o $(BUILD_DIR)/setup-mcp-tools ./cmd/setup-mcp-tools
-	@echo "Setup tool build complete: $(BUILD_DIR)/setup-mcp-tools"
-
-# Setup MCP tools for current project
-.PHONY: setup-mcp
-setup-mcp: build-setup
-	@echo "Setting up MCP tools for current project..."
-	@./$(BUILD_DIR)/setup-mcp-tools $(PWD)
-	@echo "MCP tools setup complete!"
-
-# Setup MCP tools for specified project
-.PHONY: setup-mcp-project
-setup-mcp-project: build-setup
-	@if [ -z "$(PROJECT)" ]; then \
-		echo "Usage: make setup-mcp-project PROJECT=/path/to/project"; \
-		exit 1; \
-	fi
-	@echo "Setting up MCP tools for project: $(PROJECT)"
-	@./$(BUILD_DIR)/setup-mcp-tools $(PROJECT)
-	@echo "MCP tools setup complete for $(PROJECT)!"
+# Note: MCP setup functionality is now embedded in the MCP server
+# Use the setup_mcp_tools tool via the MCP server instead
 
 # Clean build artifacts
 .PHONY: clean
