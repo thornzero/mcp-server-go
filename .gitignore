@@ -18,6 +18,7 @@ mcp-server-*
 # OS
 .DS_Store
 Thumbs.db
+.env
 
 # Logs
 *.log

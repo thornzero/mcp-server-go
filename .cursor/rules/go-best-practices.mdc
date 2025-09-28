@@ -1,0 +1,18 @@
+---
+description: Go development guidelines and best practices
+globs: ["*.go", "*.md"]
+alwaysApply: true
+---
+
+# Go Best Practices
+
+## Overview
+
+This rule provides guidelines for Go development.
+
+## Key Guidelines
+
+- Follow consistent naming conventions
+- Write clear, self-documenting code
+- Handle errors appropriately
+- Write tests for new functionality

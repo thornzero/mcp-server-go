@@ -5,16 +5,19 @@ A comprehensive Model Context Protocol (MCP) server implementation in Go that pr
 ## Features
 
 ### 🎯 **Project Management Tools**
+
 - **Goals Management**: Create, update, list, and track project goals
 - **Architecture Decision Records (ADRs)**: Manage ADR documents with automatic discovery
 - **Change Logging**: Track project changes with timestamps and file references
 
 ### 🔍 **Development Tools**
+
 - **Repository Search**: Search codebase using ripgrep/grep with line numbers
 - **CI Integration**: Run tests and check last failure status
 - **Markdown Linting**: Validate and auto-fix markdown formatting issues
 
 ### 📝 **Template System**
+
 - **Template Management**: Register, update, delete markdown templates
 - **Variable Support**: Typed variables (string, date, list, number, boolean)
 - **Content Generation**: Apply templates to generate standardized documents
@@ -22,18 +25,21 @@ A comprehensive Model Context Protocol (MCP) server implementation in Go that pr
 ## Installation
 
 ### Prerequisites
-- Go 1.25+ 
+
+- Go 1.25+
 - SQLite (included via modernc.org/sqlite)
 - markdownlint-cli (optional, for markdown linting)
 
 ### Build from Source
+
 ```bash
 git clone https://github.com/thornzero/mcp-server-go.git
 cd mcp-server-go
-go build -o mcp-server main.go
+go build -o mcp-server ./cmd/mcp-server-go
 ```
 
 ### Install markdownlint-cli (optional)
+
 ```bash
 npm install -g markdownlint-cli
 ```
@@ -58,6 +64,7 @@ Add to your `~/.cursor/mcp.json`:
 ### Available Tools
 
 #### Project Management
+
 - `goals_list` - List active project goals
 - `goals_add` - Add new project goals
 - `goals_update` - Update existing goals
@@ -66,12 +73,14 @@ Add to your `~/.cursor/mcp.json`:
 - `state_log_change` - Log project changes
 
 #### Development
+
 - `repo_search` - Search repository for text patterns
 - `ci_run_tests` - Run project tests
 - `ci_last_failure` - Get last test failure information
 - `markdown_lint` - Lint markdown files for formatting issues
 
 #### Templates
+
 - `template_list` - List available markdown templates
 - `template_register` - Register new templates
 - `template_get` - Get template details
@@ -105,6 +114,7 @@ Create a `.markdownlint.json` file in your project root:
 ### Database
 
 The server automatically creates a SQLite database at `.agent/state.db` with the following tables:
+
 - `goals` - Project goals and tasks
 - `adrs` - Architecture Decision Records
 - `ci_runs` - CI test run history
@@ -141,9 +151,10 @@ mcp-server template_apply \
 ## Development
 
 ### Project Structure
-```
+
+```text
 mcp-server-go/
-├── main.go              # Main server implementation
+├── cmd/mcp-server-go/   # Main server entry point
 ├── schema.sql           # Database schema
 ├── go.mod              # Go module definition
 ├── README.md           # This file
@@ -156,7 +167,7 @@ mcp-server-go/
 
 1. Define input/output structs
 2. Implement handler function
-3. Register tool in main.go
+3. Register tool in cmd/mcp-server-go/main.go
 4. Add to database schema if needed
 
 ### Testing

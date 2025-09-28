@@ -1,0 +1,27 @@
+---
+description: Set default output path for generated markdown documentation
+globs: "*.md"
+alwaysApply: true
+---
+
+# Documentation Output Path Rules
+
+## Default Behavior
+
+- Generated documentation should be saved to the `docs/` directory in the
+  project root by default
+- Environment variable `MCP_DOCS_OUTPUT_PATH` can override this default path
+- Relative paths are resolved relative to project root, absolute paths are used as-is
+
+## Examples
+
+- `export MCP_DOCS_OUTPUT_PATH="generated-docs"` → saves to `project/generated-docs/`
+- `export MCP_DOCS_OUTPUT_PATH="/tmp/docs"` → saves to `/tmp/docs/`
+- No env var set → saves to `project/docs/` (default)
+
+## Template Usage
+
+- When `template_apply` is called with empty `output_path`, auto-generate
+  filename in docs directory
+- Template ID becomes the filename (e.g., `architecture-doc` → `architecture-doc.md`)
+- Always ensure the output directory exists before writing files

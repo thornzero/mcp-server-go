@@ -1,0 +1,46 @@
+---
+description: React development rules and patterns
+globs: ["*.js", "*.jsx", "*.ts", "*.tsx", "*.md"]
+alwaysApply: true
+---
+
+# React Development
+
+## Overview
+
+This rule provides guidelines for React development.
+
+## Key Guidelines
+
+### Code Style
+
+- Follow consistent naming conventions
+- Use meaningful variable and function names
+- Write clear, self-documenting code
+- Follow React-specific idioms and conventions
+
+### Best Practices
+
+- Handle errors appropriately
+- Write tests for new functionality
+- Document complex business logic
+- Use functional components with hooks, implement proper state management,
+  optimize re-renders
+
+### Performance
+
+- Optimize for readability first
+- Profile before optimizing
+- Use appropriate data structures
+- Consider memory usage and efficiency
+
+### Security
+
+- Sanitize user inputs, use CSP headers, validate props, avoid XSS vulnerabilities
+
+## Additional Resources
+
+- Check the awesome-cursor-rules-mdc repository for more examples
+- Follow community best practices
+- Keep rules updated with latest standards
+- Review official React documentation regularly
