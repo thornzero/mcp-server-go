@@ -155,10 +155,46 @@ check-tools:
 # Generate documentation
 .PHONY: docs
 docs:
-	@echo "Generating documentation..."
-	godoc -http=:6060 &
-	@echo "Documentation server started at http://localhost:6060"
-	@echo "Press Ctrl+C to stop"
+	@echo "Starting godoc server..."
+	@echo "Installing godoc if not available..."
+	@go install golang.org/x/tools/cmd/godoc@latest 2>/dev/null || true
+	@echo "Starting godoc at http://localhost:6060"
+	@export PATH="$$(go env GOPATH)/bin:$$PATH" && godoc -http=:6060 &
+	@echo "✅ Documentation server started!"
+	@echo "📖 Visit: http://localhost:6060"
+	@echo "🔍 Your package: http://localhost:6060/pkg/github.com/thornzero/mcp-server-go/"
+	@echo "🛑 To stop: kill the godoc process or press Ctrl+C"
+
+.PHONY: docs-modern
+docs-modern:
+	@echo "Starting pkgsite (modern docs server)..."
+	@echo "Installing pkgsite if not available..."
+	@go install golang.org/x/pkgsite/cmd/pkgsite@latest 2>/dev/null || true
+	@echo "Starting pkgsite at http://localhost:8080"
+	@export PATH="$$(go env GOPATH)/bin:$$PATH" && pkgsite -http=:8080 &
+	@echo "✅ Modern documentation server started!"
+	@echo "📖 Visit: http://localhost:8080"
+	@echo "🔍 Your package: http://localhost:8080/github.com/thornzero/mcp-server-go"
+	@echo "🛑 To stop: kill the pkgsite process or press Ctrl+C"
+
+.PHONY: docs-build
+docs-build:
+	@echo "Building documentation..."
+	@mkdir -p docs/generated
+	@echo "📝 Generating API documentation..."
+	@go doc -all . > docs/generated/api.txt 2>/dev/null || echo "⚠️  Some packages may not have documentation"
+	@echo "✅ Documentation built in docs/generated/"
+
+# Analyze Cursor logs
+.PHONY: analyze-logs
+analyze-logs:
+	@echo "Analyzing Cursor console logs..."
+	@./scripts/simple_log_analysis.sh
+
+.PHONY: analyze-logs-detailed
+analyze-logs-detailed:
+	@echo "Detailed analysis of Cursor console logs..."
+	@./scripts/parse_cursor_logs.sh
 
 # Show help
 .PHONY: help
@@ -184,5 +220,9 @@ help:
 	@echo "  install            - Install binary to GOPATH/bin"
 	@echo "  dev-setup          - Set up development environment"
 	@echo "  check-tools        - Check if required tools are installed"
-	@echo "  docs               - Start documentation server"
+	@echo "  docs               - Start godoc documentation server (port 6060)"
+	@echo "  docs-modern        - Start pkgsite documentation server (port 8080)"
+	@echo "  docs-build         - Build static documentation files"
+	@echo "  analyze-logs       - Analyze Cursor console logs (simple)"
+	@echo "  analyze-logs-detailed - Analyze Cursor console logs (detailed)"
 	@echo "  help               - Show this help message"

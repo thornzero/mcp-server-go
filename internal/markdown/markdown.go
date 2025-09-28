@@ -300,6 +300,9 @@ func (h *MarkdownHandler) detectCodeBlockLanguage(lines []string, codeBlockLine 
 		if strings.Contains(line, "{") && strings.Contains(line, "}") {
 			return "json"
 		}
+		if strings.Contains(line, "├") || strings.Contains(line, "└") {
+			return "tree"
+		}
 	}
 
 	// Default fallbacks based on file extension or common patterns
