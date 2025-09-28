@@ -3,7 +3,6 @@ package markdown
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -144,21 +143,50 @@ func (h *MarkdownHandler) MarkdownLint(ctx context.Context, req *mcp.CallToolReq
 func (h *MarkdownHandler) applyCustomFixes(targetPath string, issues []types.LintIssue) int {
 	fixesApplied := 0
 
+	fileInfo, err := os.Stat(targetPath)
+	if os.IsNotExist(err) {
+		return fixesApplied
+	}
+
 	// Group issues by file
 	fileIssues := make(map[string][]types.LintIssue)
 	for _, issue := range issues {
 		fileIssues[issue.File] = append(fileIssues[issue.File], issue)
 	}
 
-	// Process each file
-	for file, fileIssueList := range fileIssues {
-		filePath := filepath.Join(h.server.GetRepoRoot(), file)
-		if _, err := os.Stat(filePath); os.IsNotExist(err) {
-			continue
+	// Determine which files to process
+	var filesToProcess []string
+
+	if fileInfo.IsDir() {
+		// If targetPath is a directory, process all files that have issues
+		for file := range fileIssues {
+			filePath := filepath.Join(h.server.GetRepoRoot(), file)
+			if _, err := os.Stat(filePath); !os.IsNotExist(err) {
+				filesToProcess = append(filesToProcess, filePath)
+			}
+		}
+	} else {
+		// If targetPath is a single file, only process that file
+		// Find issues for this specific file
+		relativePath, err := filepath.Rel(h.server.GetRepoRoot(), targetPath)
+		if err != nil {
+			return fixesApplied
 		}
 
+		// Check if there are issues for this file
+		if fileIssueList, exists := fileIssues[relativePath]; exists {
+			filesToProcess = append(filesToProcess, targetPath)
+			// Update the map to only include issues for this file
+			fileIssues = map[string][]types.LintIssue{
+				relativePath: fileIssueList,
+			}
+		}
+	}
+
+	// Process each file
+	for _, filePath := range filesToProcess {
 		// Read file content
-		content, err := ioutil.ReadFile(filePath)
+		content, err := os.ReadFile(filePath)
 		if err != nil {
 			continue
 		}
@@ -166,39 +194,47 @@ func (h *MarkdownHandler) applyCustomFixes(targetPath string, issues []types.Lin
 		lines := strings.Split(string(content), "\n")
 		modified := false
 
+		// Get the relative path for this file to match with issues
+		relativePath, err := filepath.Rel(h.server.GetRepoRoot(), filePath)
+		if err != nil {
+			continue
+		}
+
 		// Apply fixes for each issue in this file
-		for _, issue := range fileIssueList {
-			switch issue.Rule {
-			case "MD013/line-length":
-				// Auto-fix line length by breaking long lines
-				if issue.Line <= len(lines) && issue.Line > 0 {
-					line := lines[issue.Line-1]
-					if len(line) > 80 {
-						// Try to break the line at a good spot (before 80 chars)
-						newLines := h.breakLongLine(line, 80)
-						if len(newLines) > 1 {
-							// Replace the long line with broken lines
-							newContent := make([]string, 0, len(lines)+len(newLines)-1)
-							newContent = append(newContent, lines[:issue.Line-1]...)
-							newContent = append(newContent, newLines...)
-							newContent = append(newContent, lines[issue.Line:]...)
-							lines = newContent
-							modified = true
-							fixesApplied++
+		if fileIssueList, exists := fileIssues[relativePath]; exists {
+			for _, issue := range fileIssueList {
+				switch issue.Rule {
+				case "MD013/line-length":
+					// Auto-fix line length by breaking long lines
+					if issue.Line <= len(lines) && issue.Line > 0 {
+						line := lines[issue.Line-1]
+						if len(line) > 80 {
+							// Try to break the line at a good spot (before 80 chars)
+							newLines := h.breakLongLine(line, 80)
+							if len(newLines) > 1 {
+								// Replace the long line with broken lines
+								newContent := make([]string, 0, len(lines)+len(newLines)-1)
+								newContent = append(newContent, lines[:issue.Line-1]...)
+								newContent = append(newContent, newLines...)
+								newContent = append(newContent, lines[issue.Line:]...)
+								lines = newContent
+								modified = true
+								fixesApplied++
+							}
 						}
 					}
-				}
-			case "MD040/fenced-code-language":
-				// Auto-fix missing language specification in code blocks
-				if issue.Line <= len(lines) && issue.Line > 0 {
-					line := lines[issue.Line-1]
-					if strings.HasPrefix(line, "```") && len(strings.TrimSpace(line)) == 3 {
-						// Try to detect language based on context
-						language := h.detectCodeBlockLanguage(lines, issue.Line-1)
-						if language != "" {
-							lines[issue.Line-1] = "```" + language
-							modified = true
-							fixesApplied++
+				case "MD040/fenced-code-language":
+					// Auto-fix missing language specification in code blocks
+					if issue.Line <= len(lines) && issue.Line > 0 {
+						line := lines[issue.Line-1]
+						if strings.HasPrefix(line, "```") && len(strings.TrimSpace(line)) == 3 {
+							// Try to detect language based on context
+							language := h.detectCodeBlockLanguage(lines, issue.Line-1)
+							if language != "" {
+								lines[issue.Line-1] = "```" + language
+								modified = true
+								fixesApplied++
+							}
 						}
 					}
 				}
@@ -211,7 +247,7 @@ func (h *MarkdownHandler) applyCustomFixes(targetPath string, issues []types.Lin
 			if !strings.HasSuffix(newContent, "\n") {
 				newContent += "\n"
 			}
-			ioutil.WriteFile(filePath, []byte(newContent), 0644)
+			os.WriteFile(filePath, []byte(newContent), 0644)
 		}
 	}
 

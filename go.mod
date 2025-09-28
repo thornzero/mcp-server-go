@@ -3,6 +3,7 @@ module github.com/thornzero/mcp-server-go
 go 1.25.1
 
 require (
+	github.com/gomarkdown/markdown v0.0.0-20250810172220-2e2c11897d1a
 	github.com/modelcontextprotocol/go-sdk v0.7.0
 	gorm.io/driver/sqlite v1.6.0
 	gorm.io/gorm v1.31.0

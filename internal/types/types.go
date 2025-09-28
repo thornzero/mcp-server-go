@@ -367,3 +367,16 @@ type CursorRulesInstallOutput struct {
 	Success bool   `json:"success" jsonschema:"Whether rule was successfully installed"`
 	Message string `json:"message" jsonschema:"Installation result message"`
 }
+
+// Setup MCP Tools types
+type SetupMCPToolsInput struct {
+	ProjectPath string `json:"project_path" jsonschema:"Path to the project directory (required)"`
+}
+
+type SetupMCPToolsOutput struct {
+	Success      bool     `json:"success" jsonschema:"Whether setup was successful"`
+	ProjectPath  string   `json:"project_path" jsonschema:"Resolved project path"`
+	RulesDir     string   `json:"rules_dir" jsonschema:"Path to .cursor/rules directory"`
+	FilesCreated []string `json:"files_created" jsonschema:"List of files created"`
+	Message      string   `json:"message" jsonschema:"Setup result message"`
+}

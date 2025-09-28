@@ -1,0 +1,2 @@
+- 2025-09-28T15:56:57-04:00 — GORM Migration Completed - Database layer successfully migrated from manual SQL to GORM ORM
+  - files: movie-poll/services/gorm_service.go, movie-poll/models/, movie-poll/services/services.go, movie-poll/main.go
