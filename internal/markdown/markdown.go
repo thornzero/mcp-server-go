@@ -59,7 +59,14 @@ func (h *MarkdownHandler) MarkdownLint(ctx context.Context, req *mcp.CallToolReq
 	}
 
 	// Add target path with globs to include .mdc files
-	args = append(args, targetPath, "**/*.mdc")
+	// Construct the proper glob pattern to stay within the target directory
+	if filepath.Base(targetPath) == targetPath {
+		// If targetPath is just a filename, use it as-is
+		args = append(args, targetPath)
+	} else {
+		// If targetPath is a directory, add glob patterns for markdown files
+		args = append(args, filepath.Join(targetPath, "**/*.md"), filepath.Join(targetPath, "**/*.mdc"))
+	}
 
 	// Run markdownlint
 	cmd = exec.Command("markdownlint", args...)
@@ -70,16 +77,16 @@ func (h *MarkdownHandler) MarkdownLint(ctx context.Context, req *mcp.CallToolReq
 		// Parse markdownlint output for issues
 		lines := strings.Split(string(output), "\n")
 		// Updated regex to handle the actual markdownlint output format
-		// Format: file:line rule message [Context: "..."]
-		re := regexp.MustCompile(`^(.+?):(\d+)\s+(.+?)\s+(.+?)\s+\[Context:.*\]$`)
+		// Format: file:line:column rule message [Expected: X; Actual: Y]
+		re := regexp.MustCompile(`^(.+?):(\d+):(\d+)\s+(.+?)\s+(.+?)\s+\[Expected:.*\]$`)
 
 		for _, line := range lines {
 			if matches := re.FindStringSubmatch(line); matches != nil {
 				file := strings.TrimPrefix(matches[1], h.server.GetRepoRoot()+"/")
 				lineNum, _ := strconv.Atoi(matches[2])
-				colNum := 0 // No column info in this format
-				rule := matches[3]
-				message := matches[4]
+				colNum, _ := strconv.Atoi(matches[3])
+				rule := matches[4]
+				message := matches[5]
 
 				issues = append(issues, types.LintIssue{
 					File:    file,
@@ -104,15 +111,15 @@ func (h *MarkdownHandler) MarkdownLint(ctx context.Context, req *mcp.CallToolReq
 			issues = []types.LintIssue{}
 			if err != nil {
 				lines := strings.Split(string(output), "\n")
-				re := regexp.MustCompile(`^(.+?):(\d+)\s+(.+?)\s+(.+?)\s+\[Context:.*\]$`)
+				re := regexp.MustCompile(`^(.+?):(\d+):(\d+)\s+(.+?)\s+(.+?)\s+\[Expected:.*\]$`)
 
 				for _, line := range lines {
 					if matches := re.FindStringSubmatch(line); matches != nil {
 						file := strings.TrimPrefix(matches[1], h.server.GetRepoRoot()+"/")
 						lineNum, _ := strconv.Atoi(matches[2])
-						colNum := 0 // No column info in this format
-						rule := matches[3]
-						message := matches[4]
+						colNum, _ := strconv.Atoi(matches[3])
+						rule := matches[4]
+						message := matches[5]
 
 						issues = append(issues, types.LintIssue{
 							File:    file,
@@ -266,11 +273,15 @@ func (h *MarkdownHandler) breakLongLine(line string, maxLength int) []string {
 	for _, breakPoint := range breakPoints {
 		pos := strings.LastIndex(line[:maxLength], breakPoint)
 		if pos > maxLength/2 { // Don't break too early
-			firstLine := strings.TrimSpace(line[:pos])
+			firstLine := line[:pos+len(breakPoint)-1] // Include the break point character but not the space
 			secondLine := strings.TrimSpace(line[pos+len(breakPoint):])
 
 			// Add appropriate indentation for continuation
-			if strings.HasPrefix(line, "  ") || strings.HasPrefix(line, "   ") || strings.HasPrefix(line, "    ") {
+			if strings.HasPrefix(line, "- ") {
+				// List item - continue with proper indentation
+				secondLine = "  " + secondLine
+			} else if strings.HasPrefix(line, "  ") || strings.HasPrefix(line, "   ") || strings.HasPrefix(line, "    ") {
+				// Preserve existing indentation
 				indent := strings.TrimRight(line, strings.TrimLeft(line, " "))
 				secondLine = indent + secondLine
 			}

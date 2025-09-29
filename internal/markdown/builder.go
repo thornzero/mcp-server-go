@@ -60,6 +60,35 @@ func (b *Builder) AddList(items []string) *Builder {
 	return b
 }
 
+// AddWrappedList adds a list of items with text wrapping at the specified width
+func (b *Builder) AddWrappedList(items []string, width int) *Builder {
+	list := &ast.List{
+		ListFlags: 0, // 0 = bullet list
+	}
+
+	for _, item := range items {
+		wrappedLines := WrapText(item, width)
+		listItem := &ast.ListItem{}
+
+		for i, line := range wrappedLines {
+			paragraph := &ast.Paragraph{}
+			if i == 0 {
+				// First line gets the bullet point
+				paragraph.Literal = []byte(line)
+			} else {
+				// Subsequent lines are indented with 2 spaces (standard markdown indentation)
+				paragraph.Literal = []byte("  " + line)
+			}
+			ast.AppendChild(listItem, paragraph)
+		}
+
+		ast.AppendChild(list, listItem)
+	}
+
+	ast.AppendChild(b.doc, list)
+	return b
+}
+
 // AddCodeBlock adds a code block
 func (b *Builder) AddCodeBlock(language, code string) *Builder {
 	codeBlock := &ast.CodeBlock{}
@@ -262,7 +291,8 @@ func MCPToolsRuleBuilder(mcpServerPath string) *Builder {
 
 	// Available tools section
 	b.AddSection(2, "🎯 Available Tools", func(b *Builder) {
-		b.AddParagraph("This project has access to MCP (Model Context Protocol) server tools for enhanced project management and AI assistance.")
+		b.AddParagraph("This project has access to MCP server tools for enhanced")
+		b.AddParagraph("project management and AI assistance.")
 
 		// Goals Management
 		b.AddSection(3, "📋 Goals Management", func(b *Builder) {
@@ -275,30 +305,30 @@ func MCPToolsRuleBuilder(mcpServerPath string) *Builder {
 
 		// Cursor Rules Management
 		b.AddSection(3, "📝 Cursor Rules Management", func(b *Builder) {
-			b.AddList([]string{
+			b.AddWrappedList([]string{
 				"mcp_mcp-server-go_cursor_rules_list() - List active cursor rules",
 				"mcp_mcp-server-go_cursor_rules_add({name: \"Rule Name\", category: \"general\", content: \"Rule content\"}) - Add new rule",
 				"mcp_mcp-server-go_cursor_rules_update({id: 1, content: \"Updated content\"}) - Update existing rule",
-			})
+			}, 78)
 		})
 
 		// Documentation & ADRs
 		b.AddSection(3, "📚 Documentation & ADRs", func(b *Builder) {
-			b.AddList([]string{
+			b.AddWrappedList([]string{
 				"mcp_mcp-server-go_adrs_list() - List Architecture Decision Records",
 				"mcp_mcp-server-go_adrs_get({id: \"ADR-001\"}) - Get specific ADR content",
 				"mcp_mcp-server-go_template_list() - List available documentation templates",
 				"mcp_mcp-server-go_template_apply({template_id: \"template-name\", variables: {}}) - Generate documentation",
-			})
+			}, 78)
 		})
 
 		// Repository Tools
 		b.AddSection(3, "🔍 Repository Tools", func(b *Builder) {
-			b.AddList([]string{
+			b.AddWrappedList([]string{
 				"mcp_mcp-server-go_repo_search({q: \"search pattern\"}) - Search codebase",
 				"mcp_mcp-server-go_markdown_lint({path: \"docs/\"}) - Lint markdown files",
 				"mcp_mcp-server-go_state_log_change({summary: \"Change description\", files: [\"file1.go\"]}) - Log project changes",
-			})
+			}, 78)
 		})
 
 		// CI & Testing
@@ -396,7 +426,8 @@ func MCPUsageGuideBuilder() *Builder {
 
 	// Purpose section
 	b.AddSection(2, "🎯 Purpose", func(b *Builder) {
-		b.AddParagraph("MCP (Model Context Protocol) tools provide AI agents with project management capabilities, allowing them to:")
+		b.AddParagraph("MCP tools provide AI agents with project management")
+		b.AddParagraph("capabilities, allowing them to:")
 		b.AddList([]string{
 			"Track goals and milestones",
 			"Maintain development rules",
@@ -518,7 +549,7 @@ func MCPTroubleshootingGuideBuilder(mcpServerPath string) *Builder {
 	// Common Issues section
 	b.AddSection(2, "🚨 Common Issues", func(b *Builder) {
 		b.AddSection(3, "\"Not connected\" Error", func(b *Builder) {
-			b.AddCodeBlock("", `{"error":"Not connected"}`)
+			b.AddCodeBlock("json", `{"error":"Not connected"}`)
 			b.AddParagraph("**Cause**: MCP server not properly configured in Cursor")
 			b.AddParagraph("**Solution**:")
 			b.AddList([]string{
@@ -529,13 +560,13 @@ func MCPTroubleshootingGuideBuilder(mcpServerPath string) *Builder {
 		})
 
 		b.AddSection(3, "Parameter Type Validation Errors", func(b *Builder) {
-			b.AddCodeBlock("", `Error calling tool: Parameter 'active' must be of type null,boolean, got string`)
+			b.AddCodeBlock("text", `Error calling tool: Parameter 'active' must be of type null,boolean, got string`)
 			b.AddParagraph("**Cause**: Incorrect parameter types")
 			b.AddParagraph("**Solution**: Use required parameters only initially")
 		})
 
 		b.AddSection(3, "JSON Schema Validation Errors", func(b *Builder) {
-			b.AddCodeBlock("", `MCP error 0: validating tool output: type: <invalid reflect.Value> has type "null", want "array"`)
+			b.AddCodeBlock("text", `MCP error 0: validating tool output: type: <invalid reflect.Value> has type "null", want "array"`)
 			b.AddParagraph("**Cause**: Empty database state")
 			b.AddParagraph("**Solution**: Initialize with test data first")
 		})
@@ -596,4 +627,46 @@ mcp_mcp-server-go_goals_list()`)
 	b.AddParagraph("**Status**: Production Ready")
 
 	return b
+}
+
+// WrapText wraps text to fit within the specified width using greedy word-wrap
+func WrapText(s string, width int) []string {
+	words := strings.Fields(s)
+	if len(words) == 0 {
+		return []string{}
+	}
+
+	var lines []string
+	var currentLine strings.Builder
+	currentLength := 0
+
+	for _, word := range words {
+		wordLength := len(word)
+
+		if currentLength == 0 {
+			// First word in line
+			currentLine.WriteString(word)
+			currentLength = wordLength
+		} else {
+			// Check if adding this word would exceed the width
+			if currentLength+1+wordLength <= width {
+				// Add word to current line
+				currentLine.WriteString(" " + word)
+				currentLength += 1 + wordLength
+			} else {
+				// Finish current line and start new one
+				lines = append(lines, currentLine.String())
+				currentLine.Reset()
+				currentLine.WriteString(word)
+				currentLength = wordLength
+			}
+		}
+	}
+
+	// Add the last line if it has content
+	if currentLength > 0 {
+		lines = append(lines, currentLine.String())
+	}
+
+	return lines
 }
