@@ -33,7 +33,7 @@ func (h *ADRsHandler) ADRsList(ctx context.Context, req *mcp.CallToolRequest, in
 	}
 
 	// Convert to types.ADR
-	var resultADRs []types.ADR
+	resultADRs := make([]types.ADR, 0, len(adrs))
 	for _, adr := range adrs {
 		resultADRs = append(resultADRs, types.ADR{
 			ID:        adr.ID,

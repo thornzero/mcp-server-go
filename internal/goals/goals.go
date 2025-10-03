@@ -85,7 +85,7 @@ func (h *GoalsHandler) GoalsList(ctx context.Context, req *mcp.CallToolRequest, 
 
 func (h *GoalsHandler) GoalsAdd(ctx context.Context, req *mcp.CallToolRequest, input types.GoalsAddInput) (*mcp.CallToolResult, types.GoalsAddOutput, error) {
 	if strings.TrimSpace(input.Title) == "" {
-		return nil, types.GoalsAddOutput{}, fmt.Errorf("title required")
+		return nil, types.GoalsAddOutput{}, fmt.Errorf("title is required and cannot be empty")
 	}
 
 	prio := 100

@@ -3,7 +3,9 @@ package main
 import (
 	"bufio"
 	"encoding/json"
+	"fmt"
 	"io"
+	"os"
 	"os/exec"
 	"testing"
 	"time"
@@ -18,7 +20,7 @@ func setupTestServer(t *testing.T) (*exec.Cmd, io.WriteCloser, io.ReadCloser) {
 	}
 
 	// Start server
-	cmd := exec.Command("../build/mcp-server")
+	cmd := exec.Command("../build/project-manager")
 	stdin, err := cmd.StdinPipe()
 	if err != nil {
 		t.Fatal("Failed to create stdin pipe:", err)
@@ -32,14 +34,39 @@ func setupTestServer(t *testing.T) (*exec.Cmd, io.WriteCloser, io.ReadCloser) {
 		t.Fatal("Failed to start server:", err)
 	}
 
-	// Give server time to start
-	time.Sleep(100 * time.Millisecond)
+	// Give server time to start and verify it's running
+	time.Sleep(200 * time.Millisecond)
+
+	// Check if process is still running
+	if cmd.ProcessState != nil && cmd.ProcessState.Exited() {
+		t.Fatal("Server process exited immediately after start")
+	}
 
 	return cmd, stdin, stdout
 }
 
 func teardownTestServer(cmd *exec.Cmd) {
-	cmd.Process.Kill()
+	if cmd.Process != nil {
+		// Try graceful shutdown first
+		cmd.Process.Signal(os.Interrupt)
+
+		// Wait a bit for graceful shutdown
+		done := make(chan error, 1)
+		go func() {
+			done <- cmd.Wait()
+		}()
+
+		select {
+		case <-done:
+			// Process exited gracefully
+		case <-time.After(3 * time.Second):
+			// Force kill if it doesn't exit gracefully
+			if cmd.Process != nil {
+				cmd.Process.Kill()
+				cmd.Wait() // Wait for the kill to take effect
+			}
+		}
+	}
 }
 
 // Helper functions
@@ -49,6 +76,12 @@ func sendRequest(stdin io.WriteCloser, req MCPRequest) error {
 		return err
 	}
 	_, err = stdin.Write(append(data, '\n'))
+	if err != nil {
+		// Check for broken pipe specifically
+		if err.Error() == "write |1: broken pipe" {
+			return fmt.Errorf("server process terminated unexpectedly (broken pipe)")
+		}
+	}
 	return err
 }
 
@@ -176,9 +209,19 @@ func getGoalsToolTests() []ToolTestCase {
 			},
 			ExpectError: true,
 			Validate: func(t *testing.T, resp *MCPResponse) {
-				if resp.Error == nil {
-					t.Error("Expected error for empty title, got none")
+				// Check if error is in JSON-RPC error field
+				if resp.Error != nil {
+					return
 				}
+
+				// Check if error is in result with isError flag
+				if result, ok := resp.Result.(map[string]interface{}); ok {
+					if isError, ok := result["isError"].(bool); ok && isError {
+						return
+					}
+				}
+
+				t.Error("Expected error for empty title, got none")
 			},
 		},
 	}
@@ -497,7 +540,16 @@ func TestMCPProtocol(t *testing.T) {
 			}
 
 			if tt.ExpectError {
-				if resp.Error == nil {
+				// Check if error is in JSON-RPC error field
+				if resp.Error != nil {
+					// Error found in JSON-RPC error field
+				} else if result, ok := resp.Result.(map[string]interface{}); ok {
+					if isError, ok := result["isError"].(bool); ok && isError {
+						// Error found in result with isError flag
+					} else {
+						t.Error("Expected error but got none")
+					}
+				} else {
 					t.Error("Expected error but got none")
 				}
 			} else {
@@ -566,7 +618,16 @@ func TestGoalsTools(t *testing.T) {
 			}
 
 			if tt.ExpectError {
-				if resp.Error == nil {
+				// Check if error is in JSON-RPC error field
+				if resp.Error != nil {
+					// Error found in JSON-RPC error field
+				} else if result, ok := resp.Result.(map[string]interface{}); ok {
+					if isError, ok := result["isError"].(bool); ok && isError {
+						// Error found in result with isError flag
+					} else {
+						t.Error("Expected error but got none")
+					}
+				} else {
 					t.Error("Expected error but got none")
 				}
 			} else {
@@ -635,7 +696,16 @@ func TestADRTools(t *testing.T) {
 			}
 
 			if tt.ExpectError {
-				if resp.Error == nil {
+				// Check if error is in JSON-RPC error field
+				if resp.Error != nil {
+					// Error found in JSON-RPC error field
+				} else if result, ok := resp.Result.(map[string]interface{}); ok {
+					if isError, ok := result["isError"].(bool); ok && isError {
+						// Error found in result with isError flag
+					} else {
+						t.Error("Expected error but got none")
+					}
+				} else {
 					t.Error("Expected error but got none")
 				}
 			} else {
@@ -704,7 +774,16 @@ func TestCITools(t *testing.T) {
 			}
 
 			if tt.ExpectError {
-				if resp.Error == nil {
+				// Check if error is in JSON-RPC error field
+				if resp.Error != nil {
+					// Error found in JSON-RPC error field
+				} else if result, ok := resp.Result.(map[string]interface{}); ok {
+					if isError, ok := result["isError"].(bool); ok && isError {
+						// Error found in result with isError flag
+					} else {
+						t.Error("Expected error but got none")
+					}
+				} else {
 					t.Error("Expected error but got none")
 				}
 			} else {
@@ -773,7 +852,16 @@ func TestMarkdownTools(t *testing.T) {
 			}
 
 			if tt.ExpectError {
-				if resp.Error == nil {
+				// Check if error is in JSON-RPC error field
+				if resp.Error != nil {
+					// Error found in JSON-RPC error field
+				} else if result, ok := resp.Result.(map[string]interface{}); ok {
+					if isError, ok := result["isError"].(bool); ok && isError {
+						// Error found in result with isError flag
+					} else {
+						t.Error("Expected error but got none")
+					}
+				} else {
 					t.Error("Expected error but got none")
 				}
 			} else {
@@ -842,7 +930,16 @@ func TestTemplateTools(t *testing.T) {
 			}
 
 			if tt.ExpectError {
-				if resp.Error == nil {
+				// Check if error is in JSON-RPC error field
+				if resp.Error != nil {
+					// Error found in JSON-RPC error field
+				} else if result, ok := resp.Result.(map[string]interface{}); ok {
+					if isError, ok := result["isError"].(bool); ok && isError {
+						// Error found in result with isError flag
+					} else {
+						t.Error("Expected error but got none")
+					}
+				} else {
 					t.Error("Expected error but got none")
 				}
 			} else {
@@ -918,7 +1015,16 @@ func TestMCPIntegration(t *testing.T) {
 			}
 
 			if tt.ExpectError {
-				if resp.Error == nil {
+				// Check if error is in JSON-RPC error field
+				if resp.Error != nil {
+					// Error found in JSON-RPC error field
+				} else if result, ok := resp.Result.(map[string]interface{}); ok {
+					if isError, ok := result["isError"].(bool); ok && isError {
+						// Error found in result with isError flag
+					} else {
+						t.Error("Expected error but got none")
+					}
+				} else {
 					t.Error("Expected error but got none")
 				}
 			} else {

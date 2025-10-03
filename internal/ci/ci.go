@@ -20,13 +20,16 @@ func NewCIHandler(s *server.Server) *CIHandler {
 }
 
 func (h *CIHandler) CIRunTests(ctx context.Context, req *mcp.CallToolRequest, input types.CIRunTestsInput) (*mcp.CallToolResult, types.CIRunTestsOutput, error) {
-	scope := "./..."
+	scope := "./internal/..."
 	if input.Scope != nil && *input.Scope != "" {
 		scope = *input.Scope
 	}
 
 	start := time.Now()
-	cmd := exec.Command("go", "test", scope, "-count=1")
+	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
+	defer cancel()
+
+	cmd := exec.CommandContext(ctx, "go", "test", scope, "-count=1")
 	cmd.Dir = h.server.GetRepoRoot()
 	output, err := cmd.CombinedOutput()
 

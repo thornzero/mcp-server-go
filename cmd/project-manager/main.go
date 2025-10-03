@@ -2,10 +2,14 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
+	"os/signal"
 	"path/filepath"
+	"strconv"
 	"strings"
+	"syscall"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/thornzero/project-manager/internal/adrs"
@@ -23,6 +27,13 @@ import (
 	"github.com/thornzero/project-manager/internal/templates"
 )
 
+// debugLog prints debug messages only when PROJECT_MANAGER_DEBUG is set
+func debugLog(format string, v ...interface{}) {
+	if os.Getenv("PROJECT_MANAGER_DEBUG") != "" {
+		log.Printf("DEBUG: "+format, v...)
+	}
+}
+
 func main() {
 	// Get the directory where the executable is located
 	execPath, err := os.Executable()
@@ -32,6 +43,27 @@ func main() {
 
 	// Determine project root - try multiple strategies
 	repoRoot := findProjectRoot(execPath)
+	debugLog("Project root determined as: %s", repoRoot)
+
+	// Set up process lock to prevent multiple instances
+	debugLog("About to acquire process lock...")
+	lockFile, err := acquireProcessLock()
+	if err != nil {
+		debugLog("Process lock acquisition failed: %v", err)
+		log.Fatal(err)
+	}
+	debugLog("Process lock acquired, continuing...")
+	defer releaseProcessLock(lockFile)
+
+	// Set up signal handling for graceful shutdown
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
+	go func() {
+		<-sigChan
+		log.Println("Received shutdown signal, cleaning up...")
+		releaseProcessLock(lockFile)
+		os.Exit(0)
+	}()
 
 	// Initialize server
 	srv, err := server.NewServer(repoRoot)
@@ -248,7 +280,9 @@ func main() {
 	}, docsHandler.DocsGenerate)
 
 	// Run the server over stdin/stdout
+	log.Println("Starting MCP server...")
 	if err := mcpServer.Run(context.Background(), &mcp.StdioTransport{}); err != nil {
+		debugLog("MCP server failed to run: %v", err)
 		log.Fatal(err)
 	}
 }
@@ -292,4 +326,75 @@ func isProjectRoot(dir string) bool {
 		}
 	}
 	return false
+}
+
+// acquireProcessLock creates a PID file to prevent multiple instances from running
+func acquireProcessLock() (*os.File, error) {
+	// Put PID file in the build directory where the executable runs
+	execPath, err := os.Executable()
+	if err != nil {
+		debugLog("Failed to get executable path: %v", err)
+		return nil, fmt.Errorf("failed to get executable path: %w", err)
+	}
+	buildDir := filepath.Dir(execPath)
+	lockFilePath := filepath.Join(buildDir, "project-manager.pid")
+	debugLog("execPath=%s, buildDir=%s, lockFilePath=%s", execPath, buildDir, lockFilePath)
+
+	// Check if lock file already exists
+	if _, err := os.Stat(lockFilePath); err == nil {
+		// Lock file exists, check if the process is still running
+		pidData, err := os.ReadFile(lockFilePath)
+		if err != nil {
+			// If we can't read the file, remove it and continue
+			os.Remove(lockFilePath)
+		} else {
+			pid, err := strconv.Atoi(strings.TrimSpace(string(pidData)))
+			if err == nil && isProcessRunning(pid) {
+				return nil, fmt.Errorf("project-manager server is already running (PID: %d)", pid)
+			}
+			// Process is not running, remove stale lock file
+			os.Remove(lockFilePath)
+		}
+	}
+
+	// Create lock file with current PID
+	debugLog("Creating lock file at %s", lockFilePath)
+	lockFile, err := os.OpenFile(lockFilePath, os.O_CREATE|os.O_WRONLY|os.O_EXCL, 0644)
+	if err != nil {
+		debugLog("Failed to create lock file: %v", err)
+		return nil, fmt.Errorf("failed to create lock file: %w", err)
+	}
+
+	pid := os.Getpid()
+	debugLog("Writing PID %d to lock file", pid)
+	_, err = lockFile.WriteString(fmt.Sprintf("%d\n", pid))
+	if err != nil {
+		lockFile.Close()
+		os.Remove(lockFilePath)
+		debugLog("Failed to write PID to lock file: %v", err)
+		return nil, fmt.Errorf("failed to write PID to lock file: %w", err)
+	}
+
+	debugLog("Process lock acquired successfully")
+	return lockFile, nil
+}
+
+// releaseProcessLock removes the PID file
+func releaseProcessLock(lockFile *os.File) {
+	if lockFile != nil {
+		lockFile.Close()
+		os.Remove(lockFile.Name())
+	}
+}
+
+// isProcessRunning checks if a process with the given PID is running
+func isProcessRunning(pid int) bool {
+	process, err := os.FindProcess(pid)
+	if err != nil {
+		return false
+	}
+
+	// Send signal 0 to check if process exists without actually sending a signal
+	err = process.Signal(syscall.Signal(0))
+	return err == nil
 }
