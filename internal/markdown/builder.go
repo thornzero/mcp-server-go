@@ -348,6 +348,9 @@ func MCPToolsRuleBuilder(mcpServerPath string) *Builder {
 				"mcp_mcp-server-go_cursor_rules_list() - List active cursor rules",
 				"mcp_mcp-server-go_cursor_rules_add({name: \"Rule Name\", category: \"general\", content: \"Rule content\"}) - Add new rule",
 				"mcp_mcp-server-go_cursor_rules_update({id: 1, content: \"Updated content\"}) - Update existing rule",
+				"mcp_mcp-server-go_cursor_rules_delete({id: 1}) - Delete rule",
+				"mcp_mcp-server-go_cursor_rules_suggest({category: \"general\"}) - Suggest community rules",
+				"mcp_mcp-server-go_cursor_rules_install({rule_name: \"rule-name\"}) - Install rule from community",
 			}, 78)
 		})
 
@@ -357,7 +360,11 @@ func MCPToolsRuleBuilder(mcpServerPath string) *Builder {
 				"mcp_mcp-server-go_adrs_list() - List Architecture Decision Records",
 				"mcp_mcp-server-go_adrs_get({id: \"ADR-001\"}) - Get specific ADR content",
 				"mcp_mcp-server-go_template_list() - List available documentation templates",
-				"mcp_mcp-server-go_template_apply({template_id: \"template-name\", variables: {}}) - Generate documentation",
+				"mcp_mcp-server-go_template_register({id: \"template-id\", name: \"Template Name\", category: \"docs\", content: \"Template content\"}) - Register new template",
+				"mcp_mcp-server-go_template_get({id: \"template-id\"}) - Get template details",
+				"mcp_mcp-server-go_template_update({id: \"template-id\", content: \"Updated content\"}) - Update existing template",
+				"mcp_mcp-server-go_template_delete({id: \"template-id\"}) - Delete template",
+				"mcp_mcp-server-go_template_apply({template_id: \"template-name\", variables: {}}) - Apply template",
 			}, 78)
 		})
 
@@ -366,7 +373,8 @@ func MCPToolsRuleBuilder(mcpServerPath string) *Builder {
 			b.AddWrappedList([]string{
 				"mcp_mcp-server-go_repo_search({q: \"search pattern\"}) - Search codebase",
 				"mcp_mcp-server-go_markdown_lint({path: \"docs/\"}) - Lint markdown files",
-				"mcp_mcp-server-go_state_log_change({summary: \"Change description\", files: [\"file1.go\"]}) - Log project changes",
+				"mcp_mcp-server-go_state_log_change({summary: \"Change description\", files: [\"file1.go\"]}) - Log changes",
+				"mcp_mcp-server-go_changelog_generate({format: \"markdown\"}) - Generate changelog file",
 			}, 78)
 		})
 
@@ -376,6 +384,24 @@ func MCPToolsRuleBuilder(mcpServerPath string) *Builder {
 				"mcp_mcp-server-go_ci_run_tests({scope: \"./cmd\"}) - Run tests",
 				"mcp_mcp-server-go_ci_last_failure() - Get last test failure info",
 			})
+		})
+
+		// Preferred Tools Management
+		b.AddSection(3, "🛠️ Preferred Tools Management", func(b *Builder) {
+			b.AddWrappedList([]string{
+				"mcp_mcp-server-go_preferred_tools_list() - List preferred tools by category/language",
+				"mcp_mcp-server-go_preferred_tools_add({name: \"Tool Name\", category: \"category\"}) - Add preferred tool",
+				"mcp_mcp-server-go_preferred_tools_update({id: 1, name: \"Updated Name\"}) - Update preferred tool",
+				"mcp_mcp-server-go_preferred_tools_delete({id: 1}) - Delete preferred tool",
+			}, 78)
+		})
+
+		// Setup & Utilities
+		b.AddSection(3, "⚙️ Setup & Utilities", func(b *Builder) {
+			b.AddWrappedList([]string{
+				"mcp_mcp-server-go_setup_mcp_tools({project_path: \"/path/to/project\"}) - Set up MCP tools for a project",
+				"mcp_mcp-server-go_log_parse({file_path: \"path/to/log\"}) - Parse and analyze log files",
+			}, 78)
 		})
 	})
 
@@ -427,7 +453,70 @@ mcp_mcp-server-go_cursor_rules_list()`)
 			"Check if MCP server is configured in Cursor settings",
 			"Restart Cursor completely",
 			"Verify database exists: `.agent/state.db`",
-			"Try adding test data first: mcp_mcp-server-go_goals_add({title: \"Test\"})",
+			"Try adding test data first: `mcp_mcp-server-go_goals_add({title: \"Test\"})`",
+		})
+	})
+
+	// Go Project Structure section
+	b.AddSection(2, "🏗️ Go Project Structure & Testing", func(b *Builder) {
+		b.AddSection(3, "Standard Go Project Layout", func(b *Builder) {
+			b.AddCodeBlock("text", `project-root/
+├── cmd/                    # Main applications
+│   └── app-name/
+│       └── main.go
+├── internal/              # Private application code
+│   ├── package1/
+│   │   ├── file.go
+│   │   └── file_test.go   # Unit tests
+│   └── package2/
+├── pkg/                   # Public library code
+├── test/                  # Integration tests
+├── docs/                  # Documentation
+├── go.mod
+├── go.sum
+└── Makefile`)
+		})
+
+		b.AddSection(3, "Testing Conventions", func(b *Builder) {
+			b.AddSection(4, "Unit Tests (Fast, isolated)", func(b *Builder) {
+				b.AddList([]string{
+					"Location: Same directory as source code (`internal/package/file_test.go`)",
+					"Command: `go test ./...` (runs all unit tests)",
+					"Purpose: Test individual functions/methods",
+				})
+			})
+
+			b.AddSection(4, "Integration Tests (End-to-end)", func(b *Builder) {
+				b.AddList([]string{
+					"Location: `test/` directory at project root",
+					"Command: `go test ./test/...` or `cd test && go test`",
+					"Purpose: Test multiple packages together",
+				})
+			})
+
+			b.AddSection(4, "Test Commands", func(b *Builder) {
+				b.AddCodeBlock("bash", `# Unit tests only
+go test ./...
+
+# Integration tests only  
+cd test && go test
+
+# All tests
+make test-all
+
+# With coverage
+go test -cover ./...`)
+			})
+
+			b.AddSection(4, "Best Practices", func(b *Builder) {
+				b.AddList([]string{
+					"Unit tests: Co-locate with source code (`*_test.go`)",
+					"Integration tests: Separate `test/` directory",
+					"Makefile: Provide convenient test targets",
+					"Coverage: Aim for >80% test coverage",
+					"Naming: Use descriptive test names (`TestFunctionName_Scenario`)",
+				})
+			})
 		})
 	})
 

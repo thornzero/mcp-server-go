@@ -29,22 +29,22 @@ clean:
 	go clean
 	@echo "Clean complete"
 
-# Run tests
-.PHONY: test
-test:
-	@echo "Running all tests..."
-	go test -v ./...
+# Run unit tests only
+.PHONY: test-unit
+test-unit:
+	@echo "Running unit tests..."
+	go test -v ./internal/...
 
-# Run all integration tests
-.PHONY: test-all
-test-all: test-integration test-goals test-protocol test-ci test-markdown test-templates
-	@echo "All integration tests completed!"
-
-# Run integration tests
+# Run integration tests only
 .PHONY: test-integration
 test-integration:
 	@echo "Running integration tests..."
 	cd test && go test -v
+
+# Run all tests (unit + integration)
+.PHONY: test-all
+test-all: test-unit test-integration
+	@echo "All tests completed!"
 
 # Run specific test categories
 .PHONY: test-goals

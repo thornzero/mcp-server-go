@@ -1,11 +1,7 @@
 ---
-
 description: MCP Server Tools - Project Management and Development Assistance
-
 globs: ["**/*"]
-
 alwaysApply: true
-
 ---
 
 
@@ -113,6 +109,66 @@ If tools don't work:
 - Restart Cursor completely
 - Verify database exists: `.agent/state.db`
 - Try adding test data first: `mcp_mcp-server-go_goals_add({title: "Test"})`
+
+## 🏗️ Go Project Structure & Testing
+
+### **Standard Go Project Layout**
+
+```treeview
+project-root/
+├── cmd/                    # Main applications
+│   └── app-name/
+│       └── main.go
+├── internal/              # Private application code
+│   ├── package1/
+│   │   ├── file.go
+│   │   └── file_test.go   # Unit tests
+│   └── package2/
+├── pkg/                   # Public library code
+├── test/                  # Integration tests
+├── docs/                  # Documentation
+├── go.mod
+├── go.sum
+└── Makefile
+```
+
+### **Testing Conventions**
+
+#### **Unit Tests** (Fast, isolated)
+
+- **Location**: Same directory as source code (`internal/package/file_test.go`)
+- **Command**: `go test ./...` (runs all unit tests)
+- **Purpose**: Test individual functions/methods
+
+#### **Integration Tests** (End-to-end)
+
+- **Location**: `test/` directory at project root
+- **Command**: `go test ./test/...` or `cd test && go test`
+- **Purpose**: Test multiple packages together
+
+#### **Test Commands**
+
+```bash
+# Unit tests only
+go test ./...
+
+# Integration tests only  
+cd test && go test
+
+# All tests
+make test-all
+
+# With coverage
+go test -cover ./...
+```
+
+### **Best Practices**
+
+- **Unit tests**: Co-locate with source code (`*_test.go`)
+- **Integration tests**: Separate `test/` directory
+- **Makefile**: Provide convenient test targets
+- **Coverage**: Aim for >80% test coverage
+- **Naming**: Use descriptive test names (`TestFunctionName_Scenario`)
 
 ## 📚 Documentation
 
