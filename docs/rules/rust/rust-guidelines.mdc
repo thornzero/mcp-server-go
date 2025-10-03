@@ -1,0 +1,26 @@
+---
+description: Basic guidelines for Rust projects
+globs: ["*.rs", "Cargo.toml", "Cargo.lock"]
+alwaysApply: true
+---
+
+# Rust Project Guidelines
+
+## Code Style
+
+- Follow Rust conventions and idioms
+- Use meaningful variable and function names
+- Handle errors with Result and Option types
+- Use clippy for additional linting
+
+## Testing
+
+- Write unit tests in the same file
+- Use integration tests in tests/ directory
+- Run tests with `cargo test`
+
+## Dependencies
+
+- Keep Cargo.toml clean
+- Use exact versions for critical dependencies
+- Regular updates with `cargo update`

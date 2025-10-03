@@ -7,11 +7,14 @@ import (
 
 func TestNewBuilder(t *testing.T) {
 	builder := NewBuilder()
-	if builder == nil {
-		t.Errorf("NewBuilder() returned nil")
-	}
-	if builder.doc == nil {
-		t.Errorf("NewBuilder() created builder with nil document")
+
+	// Verify builder is not nil and has a valid document
+	if builder == nil || builder.doc == nil {
+		if builder == nil {
+			t.Errorf("NewBuilder() returned nil")
+		} else {
+			t.Errorf("NewBuilder() created builder with nil document")
+		}
 	}
 }
 

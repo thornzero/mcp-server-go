@@ -312,9 +312,6 @@ func (b *Builder) ValidateMarkdown() error {
 	return nil
 }
 
-
-
-
 // WrapText wraps text to fit within the specified width using greedy word-wrap
 func WrapText(s string, width int) []string {
 	words := strings.Fields(s)

@@ -1,0 +1,25 @@
+---
+description: Basic guidelines for any project
+alwaysApply: true
+---
+
+# General Project Guidelines
+
+## Code Quality
+
+- Write clean, readable code
+- Use meaningful variable and function names
+- Add comments for complex logic
+- Follow consistent formatting
+
+## Testing
+
+- Write tests for new functionality
+- Test edge cases and error conditions
+- Keep tests simple and focused
+
+## Documentation
+
+- Keep README up to date
+- Document API changes
+- Use clear commit messages

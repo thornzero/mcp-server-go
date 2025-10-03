@@ -1,0 +1,25 @@
+---
+description: Basic guidelines for Python projects
+globs: ["*.py", "requirements.txt", "pyproject.toml"]
+alwaysApply: true
+---
+
+# Python Project Guidelines
+
+## Code Style
+
+- Follow PEP 8 style guidelines
+- Use type hints for better code clarity
+- Use meaningful variable and function names
+
+## Testing
+
+- Write tests with pytest or unittest
+- Use descriptive test names
+- Mock external dependencies
+
+## Dependencies
+
+- Use virtual environments
+- Pin dependency versions
+- Regular security updates

@@ -1,0 +1,26 @@
+---
+description: Basic guidelines for Go projects
+globs: ["*.go"]
+alwaysApply: true
+---
+
+# Go Project Guidelines
+
+## Code Style
+
+- Follow Go conventions and idioms
+- Use meaningful variable and function names
+- Handle errors explicitly
+- Use context for cancellation and timeouts
+
+## Testing
+
+- Write tests for new functionality
+- Use table-driven tests where appropriate
+- Run tests before committing: `go test ./...`
+
+## Dependencies
+
+- Keep dependencies minimal
+- Use `go mod tidy` to clean up dependencies
+- Pin major versions in go.mod

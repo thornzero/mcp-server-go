@@ -1,0 +1,25 @@
+---
+description: Basic guidelines for Node.js projects
+globs: ["*.js", "*.ts", "package.json"]
+alwaysApply: true
+---
+
+# Node.js Project Guidelines
+
+## Code Style
+
+- Use ESLint and Prettier for code formatting
+- Follow consistent naming conventions
+- Use TypeScript for better type safety
+
+## Testing
+
+- Write unit tests with Jest or similar
+- Use meaningful test descriptions
+- Mock external dependencies
+
+## Dependencies
+
+- Keep package.json clean
+- Use exact versions for critical dependencies
+- Regular security audits with `npm audit`

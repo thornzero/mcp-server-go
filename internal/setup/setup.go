@@ -66,12 +66,6 @@ func (h *SetupHandler) shouldCreateGenericRules(projectPath string) bool {
 			}
 		}
 	}
-
-	// Don't create generic rules for MCP server projects
-	if strings.Contains(projectPath, "mcp-server") {
-		return false
-	}
-
 	return true
 }
 
@@ -116,21 +110,20 @@ func (h *SetupHandler) SetupProjectManager(ctx context.Context, req *mcp.CallToo
 	sourceDir := filepath.Join(mcpServerPath, "docs", "rules")
 
 	// List of rule files to copy
-	ruleFiles := []string{
-		"project-manager-tools.mdc",
-		"project-manager-tools-usage.mdc",
-		"project-manager-tools-troubleshooting.mdc",
+	ruleFiles, err := os.ReadDir(sourceDir)
+	if err != nil {
+		return nil, types.SetupProjectManagerOutput{}, fmt.Errorf("failed to read rules directory: %v", err)
 	}
 
 	for _, filename := range ruleFiles {
-		sourcePath := filepath.Join(sourceDir, filename)
-		destPath := filepath.Join(rulesDir, filename)
+		sourcePath := filepath.Join(sourceDir, filename.Name())
+		destPath := filepath.Join(rulesDir, filename.Name())
 
 		// Copy file from source to destination
-		if err := h.copyFile(sourcePath, destPath); err != nil {
+		if err := h.copyFile(sourcePath, destPath, filename.Name()); err != nil {
 			return nil, types.SetupProjectManagerOutput{}, fmt.Errorf("failed to copy %s: %v", filename, err)
 		}
-		filesCreated = append(filesCreated, filename)
+		filesCreated = append(filesCreated, filename.Name())
 	}
 
 	// Only create generic rules if appropriate
@@ -138,15 +131,15 @@ func (h *SetupHandler) SetupProjectManager(ctx context.Context, req *mcp.CallToo
 		// Create project-specific generic rules based on project type
 		switch projectType {
 		case "go":
-			h.createGoProjectRules(rulesDir, &filesCreated)
+			h.copyFile(sourceDir, rulesDir, "go-guidelines.mdc")
 		case "nodejs":
-			h.createNodeJSProjectRules(rulesDir, &filesCreated)
+			h.copyFile(sourceDir, rulesDir, "nodejs-guidelines.mdc")
 		case "python":
-			h.createPythonProjectRules(rulesDir, &filesCreated)
+			h.copyFile(sourceDir, rulesDir, "python-guidelines.mdc")
 		case "rust":
-			h.createRustProjectRules(rulesDir, &filesCreated)
+			h.copyFile(sourceDir, rulesDir, "rust-guidelines.mdc")
 		default:
-			h.createGenericProjectRules(rulesDir, &filesCreated)
+			h.copyFile(sourceDir, rulesDir, "general-guidelines.mdc")
 		}
 	}
 
@@ -160,193 +153,31 @@ func (h *SetupHandler) SetupProjectManager(ctx context.Context, req *mcp.CallToo
 	}, nil
 }
 
-// createGoProjectRules creates Go-specific project rules
-func (h *SetupHandler) createGoProjectRules(rulesDir string, filesCreated *[]string) {
-	// For now, just create a basic Go rule
-	goRule := `---
-title: Go Project Guidelines
-description: Basic guidelines for Go projects
-globs: ["**/*.go", "go.mod", "go.sum"]
-alwaysApply: true
----
-
-# Go Project Guidelines
-
-## Code Style
-- Follow Go conventions and idioms
-- Use meaningful variable and function names
-- Handle errors explicitly
-- Use context for cancellation and timeouts
-
-## Testing
-- Write tests for new functionality
-- Use table-driven tests where appropriate
-- Run tests before committing: ` + "`" + `go test ./...` + "`" + `
-
-## Dependencies
-- Keep dependencies minimal
-- Use ` + "`" + `go mod tidy` + "`" + ` to clean up dependencies
-- Pin major versions in go.mod
-`
-
-	goRulePath := filepath.Join(rulesDir, "go-guidelines.mdc")
-	if err := os.WriteFile(goRulePath, []byte(goRule), 0644); err == nil {
-		*filesCreated = append(*filesCreated, "go-guidelines.mdc")
-	}
-}
-
-// createNodeJSProjectRules creates Node.js-specific project rules
-func (h *SetupHandler) createNodeJSProjectRules(rulesDir string, filesCreated *[]string) {
-	nodeRule := `---
-title: Node.js Project Guidelines
-description: Basic guidelines for Node.js projects
-globs: ["**/*.js", "**/*.ts", "package.json"]
-alwaysApply: true
----
-
-# Node.js Project Guidelines
-
-## Code Style
-- Use ESLint and Prettier for code formatting
-- Follow consistent naming conventions
-- Use TypeScript for better type safety
-
-## Testing
-- Write unit tests with Jest or similar
-- Use meaningful test descriptions
-- Mock external dependencies
-
-## Dependencies
-- Keep package.json clean
-- Use exact versions for critical dependencies
-- Regular security audits with ` + "`" + `npm audit` + "`" + `
-`
-
-	nodeRulePath := filepath.Join(rulesDir, "nodejs-guidelines.mdc")
-	if err := os.WriteFile(nodeRulePath, []byte(nodeRule), 0644); err == nil {
-		*filesCreated = append(*filesCreated, "nodejs-guidelines.mdc")
-	}
-}
-
-// createPythonProjectRules creates Python-specific project rules
-func (h *SetupHandler) createPythonProjectRules(rulesDir string, filesCreated *[]string) {
-	pythonRule := `---
-title: Python Project Guidelines
-description: Basic guidelines for Python projects
-globs: ["**/*.py", "requirements.txt", "pyproject.toml"]
-alwaysApply: true
----
-
-# Python Project Guidelines
-
-## Code Style
-- Follow PEP 8 style guidelines
-- Use type hints for better code clarity
-- Use meaningful variable and function names
-
-## Testing
-- Write tests with pytest or unittest
-- Use descriptive test names
-- Mock external dependencies
-
-## Dependencies
-- Use virtual environments
-- Pin dependency versions
-- Regular security updates
-`
-
-	pythonRulePath := filepath.Join(rulesDir, "python-guidelines.mdc")
-	if err := os.WriteFile(pythonRulePath, []byte(pythonRule), 0644); err == nil {
-		*filesCreated = append(*filesCreated, "python-guidelines.mdc")
-	}
-}
-
-// createRustProjectRules creates Rust-specific project rules
-func (h *SetupHandler) createRustProjectRules(rulesDir string, filesCreated *[]string) {
-	rustRule := `---
-title: Rust Project Guidelines
-description: Basic guidelines for Rust projects
-globs: ["**/*.rs", "Cargo.toml", "Cargo.lock"]
-alwaysApply: true
----
-
-# Rust Project Guidelines
-
-## Code Style
-- Follow Rust conventions and idioms
-- Use meaningful variable and function names
-- Handle errors with Result and Option types
-- Use clippy for additional linting
-
-## Testing
-- Write unit tests in the same file
-- Use integration tests in tests/ directory
-- Run tests with ` + "`" + `cargo test` + "`" + `
-
-## Dependencies
-- Keep Cargo.toml clean
-- Use exact versions for critical dependencies
-- Regular updates with ` + "`" + `cargo update` + "`" + `
-`
-
-	rustRulePath := filepath.Join(rulesDir, "rust-guidelines.mdc")
-	if err := os.WriteFile(rustRulePath, []byte(rustRule), 0644); err == nil {
-		*filesCreated = append(*filesCreated, "rust-guidelines.mdc")
-	}
-}
-
-// createGenericProjectRules creates generic project rules
-func (h *SetupHandler) createGenericProjectRules(rulesDir string, filesCreated *[]string) {
-	genericRule := `---
-title: General Project Guidelines
-description: Basic guidelines for any project
-globs: ["**/*"]
-alwaysApply: true
----
-
-# General Project Guidelines
-
-## Code Quality
-- Write clean, readable code
-- Use meaningful variable and function names
-- Add comments for complex logic
-- Follow consistent formatting
-
-## Testing
-- Write tests for new functionality
-- Test edge cases and error conditions
-- Keep tests simple and focused
-
-## Documentation
-- Keep README up to date
-- Document API changes
-- Use clear commit messages
-`
-
-	genericRulePath := filepath.Join(rulesDir, "general-guidelines.mdc")
-	if err := os.WriteFile(genericRulePath, []byte(genericRule), 0644); err == nil {
-		*filesCreated = append(*filesCreated, "general-guidelines.mdc")
-	}
-}
-
 // copyFile copies a file from source to destination
-func (h *SetupHandler) copyFile(src, dst string) error {
-	sourceFile, err := os.Open(src)
+func (h *SetupHandler) copyFile(src, dst, filename string) error {
+	sourcePath := filepath.Join(src, filename)
+	sourceFile, err := os.Open(sourcePath)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to open source file: %v", err)
 	}
 	defer sourceFile.Close()
 
-	destFile, err := os.Create(dst)
+	destPath := filepath.Join(dst, filename)
+	destFile, err := os.Create(destPath)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to create destination file: %v", err)
 	}
 	defer destFile.Close()
 
 	_, err = io.Copy(destFile, sourceFile)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to copy file: %v", err)
 	}
 
-	return destFile.Sync()
+	err = destFile.Sync()
+	if err != nil {
+		return fmt.Errorf("failed to sync destination file: %v", err)
+	}
+
+	return nil
 }
