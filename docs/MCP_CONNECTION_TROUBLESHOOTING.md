@@ -156,7 +156,7 @@ echo '{"jsonrpc": "2.0", "id": 1, "method": "tools/list"}' | ./build/mcp-server
 1. **Check Connection:**
    ```javascript
    // Try a simple tool call
-   mcp_project-manager_goals_list()
+   mcp_goals_list()
    ```
 
 2. **Restart Cursor** if connection fails
@@ -170,8 +170,8 @@ echo '{"jsonrpc": "2.0", "id": 1, "method": "tools/list"}' | ./build/mcp-server
 
 5. **Test Basic Functionality:**
    ```javascript
-   mcp_project-manager_goals_add({ title: "Test Goal" })
-   mcp_project-manager_goals_list()
+   mcp_goals_add({ title: "Test Goal" })
+   mcp_goals_list()
    ```
 
 ## 📊 **Success Indicators**

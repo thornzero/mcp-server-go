@@ -21,12 +21,12 @@ Error calling tool: Parameter 'notes' must be of type null,string, got string
 1. **Avoid Optional Parameters Initially:**
    ```javascript
    // ✅ WORKING - Required parameters only
-   mcp_project-manager_goals_add({
+   mcp_goals_add({
      title: "Goal Title"
    })
    
    // ❌ PROBLEMATIC - Optional parameters
-   mcp_project-manager_goals_add({
+   mcp_goals_add({
      title: "Goal Title",
      notes: "Some notes"  // This causes type validation errors
    })
@@ -50,12 +50,12 @@ MCP error 0: validating tool output: validating root: validating /properties/rul
 1. **Initialize Database with Test Data:**
    ```javascript
    // Add a test goal
-   mcp_project-manager_goals_add({
+   mcp_goals_add({
      title: "Test Goal for MCP Tools"
    })
    
    // Add a test cursor rule
-   mcp_project-manager_cursor_rules_add({
+   mcp_cursor_rules_add({
      name: "Test Rule",
      category: "testing", 
      content: `---
@@ -90,12 +90,12 @@ This is a test rule to validate MCP tools functionality.`
 1. **Bootstrap Process:**
    ```javascript
    // Step 1: Add initial goal
-   mcp_project-manager_goals_add({
+   mcp_goals_add({
      title: "Project Setup Complete"
    })
    
    // Step 2: Add initial cursor rule
-   mcp_project-manager_cursor_rules_add({
+   mcp_cursor_rules_add({
      name: "Project Guidelines",
      category: "general",
      content: `---
@@ -110,8 +110,8 @@ Follow these general guidelines for all development work.`
    })
    
    // Step 3: Verify tools work
-   mcp_project-manager_goals_list()
-   mcp_project-manager_cursor_rules_list()
+   mcp_goals_list()
+   mcp_cursor_rules_list()
    ```
 
 ## 🛠️ **Reliable Usage Patterns**
@@ -121,14 +121,14 @@ Follow these general guidelines for all development work.`
 ```javascript
 // Always start with these tools (no optional parameters)
 const safeTools = [
-  'mcp_project-manager_goals_add',
-  'mcp_project-manager_cursor_rules_add', 
-  'mcp_project-manager_goals_list',
-  'mcp_project-manager_cursor_rules_list'
+  'mcp_goals_add',
+  'mcp_cursor_rules_add', 
+  'mcp_goals_list',
+  'mcp_cursor_rules_list'
 ]
 
 // Use required parameters only initially
-mcp_project-manager_goals_add({
+mcp_goals_add({
   title: "Project Goal"
 })
 ```
@@ -137,18 +137,18 @@ mcp_project-manager_goals_add({
 
 ```javascript
 // Step 1: Basic functionality
-mcp_project-manager_goals_add({ title: "Goal 1" })
+mcp_goals_add({ title: "Goal 1" })
 
 // Step 2: Add more complex data
-mcp_project-manager_cursor_rules_add({
+mcp_cursor_rules_add({
   name: "Rule 1",
   category: "language",
   content: "Rule content here"
 })
 
 // Step 3: Test list operations
-mcp_project-manager_goals_list()
-mcp_project-manager_cursor_rules_list()
+mcp_goals_list()
+mcp_cursor_rules_list()
 ```
 
 ### **Pattern 3: Error Recovery**
@@ -158,10 +158,10 @@ mcp_project-manager_cursor_rules_list()
 try {
   // 1. Check if database exists
   // 2. Add minimal test data
-  mcp_project-manager_goals_add({ title: "Test" })
+  mcp_goals_add({ title: "Test" })
   
   // 3. Verify basic functionality
-  mcp_project-manager_goals_list()
+  mcp_goals_list()
   
   // 4. Proceed with normal operations
 } catch (error) {
@@ -252,8 +252,8 @@ project-root/
 ## 📊 **Success Indicators**
 
 ✅ **Tools Working Correctly:**
-- `mcp_project-manager_goals_list()` returns array of goals
-- `mcp_project-manager_cursor_rules_list()` returns array of rules
+- `mcp_goals_list()` returns array of goals
+- `mcp_cursor_rules_list()` returns array of rules
 - No parameter type validation errors
 - Database file exists and has content
 

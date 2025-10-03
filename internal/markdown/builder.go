@@ -336,71 +336,71 @@ func MCPToolsRuleBuilder(mcpServerPath string) *Builder {
 		// Goals Management
 		b.AddSection(3, "📋 Goals Management", func(b *Builder) {
 			b.AddList([]string{
-				"mcp_project-manager_goals_list() - List active project goals",
-				"mcp_project-manager_goals_add({title: \"Goal Title\"}) - Add new goal",
-				"mcp_project-manager_goals_update({id: 1, status: \"done\"}) - Update goal status",
+				"mcp_goals_list() - List active project goals",
+				"mcp_goals_add({title: \"Goal Title\"}) - Add new goal",
+				"mcp_goals_update({id: 1, status: \"done\"}) - Update goal status",
 			})
 		})
 
 		// Cursor Rules Management
 		b.AddSection(3, "📝 Cursor Rules Management", func(b *Builder) {
 			b.AddWrappedList([]string{
-				"mcp_project-manager_cursor_rules_list() - List active cursor rules",
-				"mcp_project-manager_cursor_rules_add({name: \"Rule Name\", category: \"general\", content: \"Rule content\"}) - Add new rule",
-				"mcp_project-manager_cursor_rules_update({id: 1, content: \"Updated content\"}) - Update existing rule",
-				"mcp_project-manager_cursor_rules_delete({id: 1}) - Delete rule",
-				"mcp_project-manager_cursor_rules_suggest({category: \"general\"}) - Suggest community rules",
-				"mcp_project-manager_cursor_rules_install({rule_name: \"rule-name\"}) - Install rule from community",
+				"mcp_cursor_rules_list() - List active cursor rules",
+				"mcp_cursor_rules_add({name: \"Rule Name\", category: \"general\", content: \"Rule content\"}) - Add new rule",
+				"mcp_cursor_rules_update({id: 1, content: \"Updated content\"}) - Update existing rule",
+				"mcp_cursor_rules_delete({id: 1}) - Delete rule",
+				"mcp_cursor_rules_suggest({category: \"general\"}) - Suggest community rules",
+				"mcp_cursor_rules_install({rule_name: \"rule-name\"}) - Install rule from community",
 			}, 78)
 		})
 
 		// Documentation & ADRs
 		b.AddSection(3, "📚 Documentation & ADRs", func(b *Builder) {
 			b.AddWrappedList([]string{
-				"mcp_project-manager_adrs_list() - List Architecture Decision Records",
-				"mcp_project-manager_adrs_get({id: \"ADR-001\"}) - Get specific ADR content",
-				"mcp_project-manager_template_list() - List available documentation templates",
-				"mcp_project-manager_template_register({id: \"template-id\", name: \"Template Name\", category: \"docs\", content: \"Template content\"}) - Register new template",
-				"mcp_project-manager_template_get({id: \"template-id\"}) - Get template details",
-				"mcp_project-manager_template_update({id: \"template-id\", content: \"Updated content\"}) - Update existing template",
-				"mcp_project-manager_template_delete({id: \"template-id\"}) - Delete template",
-				"mcp_project-manager_template_apply({template_id: \"template-name\", variables: {}}) - Apply template",
+				"mcp_adrs_list() - List Architecture Decision Records",
+				"mcp_adrs_get({id: \"ADR-001\"}) - Get specific ADR content",
+				"mcp_template_list() - List available documentation templates",
+				"mcp_template_register({id: \"template-id\", name: \"Template Name\", category: \"docs\", content: \"Template content\"}) - Register new template",
+				"mcp_template_get({id: \"template-id\"}) - Get template details",
+				"mcp_template_update({id: \"template-id\", content: \"Updated content\"}) - Update existing template",
+				"mcp_template_delete({id: \"template-id\"}) - Delete template",
+				"mcp_template_apply({template_id: \"template-name\", variables: {}}) - Apply template",
 			}, 78)
 		})
 
 		// Repository Tools
 		b.AddSection(3, "🔍 Repository Tools", func(b *Builder) {
 			b.AddWrappedList([]string{
-				"mcp_project-manager_repo_search({q: \"search pattern\"}) - Search codebase",
-				"mcp_project-manager_markdown_lint({path: \"docs/\"}) - Lint markdown files",
-				"mcp_project-manager_state_log_change({summary: \"Change description\", files: [\"file1.go\"]}) - Log changes",
-				"mcp_project-manager_changelog_generate({format: \"markdown\"}) - Generate changelog file",
+				"mcp_repo_search({q: \"search pattern\"}) - Search codebase",
+				"mcp_markdown_lint({path: \"docs/\"}) - Lint markdown files",
+				"mcp_state_log_change({summary: \"Change description\", files: [\"file1.go\"]}) - Log changes",
+				"mcp_changelog_generate({format: \"markdown\"}) - Generate changelog file",
 			}, 78)
 		})
 
 		// CI & Testing
 		b.AddSection(3, "🧪 CI & Testing", func(b *Builder) {
 			b.AddList([]string{
-				"mcp_project-manager_ci_run_tests({scope: \"./cmd\"}) - Run tests",
-				"mcp_project-manager_ci_last_failure() - Get last test failure info",
+				"mcp_ci_run_tests({scope: \"./cmd\"}) - Run tests",
+				"mcp_ci_last_failure() - Get last test failure info",
 			})
 		})
 
 		// Preferred Tools Management
 		b.AddSection(3, "🛠️ Preferred Tools Management", func(b *Builder) {
 			b.AddWrappedList([]string{
-				"mcp_project-manager_preferred_tools_list() - List preferred tools by category/language",
-				"mcp_project-manager_preferred_tools_add({name: \"Tool Name\", category: \"category\"}) - Add preferred tool",
-				"mcp_project-manager_preferred_tools_update({id: 1, name: \"Updated Name\"}) - Update preferred tool",
-				"mcp_project-manager_preferred_tools_delete({id: 1}) - Delete preferred tool",
+				"mcp_preferred_tools_list() - List preferred tools by category/language",
+				"mcp_preferred_tools_add({name: \"Tool Name\", category: \"category\"}) - Add preferred tool",
+				"mcp_preferred_tools_update({id: 1, name: \"Updated Name\"}) - Update preferred tool",
+				"mcp_preferred_tools_delete({id: 1}) - Delete preferred tool",
 			}, 78)
 		})
 
 		// Setup & Utilities
 		b.AddSection(3, "⚙️ Setup & Utilities", func(b *Builder) {
 			b.AddWrappedList([]string{
-				"mcp_project-manager_setup_mcp_tools({project_path: \"/path/to/project\"}) - Set up MCP tools for a project",
-				"mcp_project-manager_log_parse({file_path: \"path/to/log\"}) - Parse and analyze log files",
+				"mcp_setup_mcp_tools({project_path: \"/path/to/project\"}) - Set up MCP tools for a project",
+				"mcp_log_parse({file_path: \"path/to/log\"}) - Parse and analyze log files",
 			}, 78)
 		})
 	})
@@ -410,20 +410,20 @@ func MCPToolsRuleBuilder(mcpServerPath string) *Builder {
 		b.AddSection(3, "1. Initialize Project Data", func(b *Builder) {
 			b.AddParagraph("First, add initial project data:")
 			b.AddCodeBlock("javascript", `// Add initial project goal
-mcp_project-manager_goals_add({
+mcp_goals_add({
   title: "Project Setup Complete"
 })
 
 // Add project guidelines rule
-mcp_project-manager_cursor_rules_add({
+mcp_cursor_rules_add({
   name: "Project Guidelines",
   category: "general",
   content: "Your project guidelines here..."
 })
 
 // Verify tools work
-mcp_project-manager_goals_list()
-mcp_project-manager_cursor_rules_list()`)
+mcp_goals_list()
+mcp_cursor_rules_list()`)
 		})
 
 		b.AddSection(3, "2. Use Tools Regularly", func(b *Builder) {
@@ -453,7 +453,7 @@ mcp_project-manager_cursor_rules_list()`)
 			"Check if MCP server is configured in Cursor settings",
 			"Restart Cursor completely",
 			"Verify database exists: `.agent/state.db`",
-			"Try adding test data first: `mcp_project-manager_goals_add({title: \"Test\"})`",
+			"Try adding test data first: `mcp_goals_add({title: \"Test\"})`",
 		})
 	})
 
@@ -569,48 +569,48 @@ func MCPUsageGuideBuilder() *Builder {
 	b.AddSection(2, "📋 Core Workflows", func(b *Builder) {
 		b.AddSection(3, "Project Initialization", func(b *Builder) {
 			b.AddCodeBlock("javascript", `// 1. Add initial project goal
-mcp_project-manager_goals_add({
+mcp_goals_add({
   title: "Project Setup Complete"
 })
 
 // 2. Add project guidelines
-mcp_project-manager_cursor_rules_add({
+mcp_cursor_rules_add({
   name: "Project Guidelines",
   category: "general",
   content: "Your project guidelines here..."
 })
 
 // 3. Verify tools work
-mcp_project-manager_goals_list()
-mcp_project-manager_cursor_rules_list()`)
+mcp_goals_list()
+mcp_cursor_rules_list()`)
 		})
 
 		b.AddSection(3, "Goal Management", func(b *Builder) {
 			b.AddCodeBlock("javascript", `// Add goals for different phases
-mcp_project-manager_goals_add({title: "Phase 1: Core Features"})
-mcp_project-manager_goals_add({title: "Phase 2: Performance"})
-mcp_project-manager_goals_add({title: "Phase 3: Polish"})
+mcp_goals_add({title: "Phase 1: Core Features"})
+mcp_goals_add({title: "Phase 2: Performance"})
+mcp_goals_add({title: "Phase 3: Polish"})
 
 // Update goal status
-mcp_project-manager_goals_update({
+mcp_goals_update({
   id: 1,
   status: "done"
 })
 
 // List all goals
-mcp_project-manager_goals_list()`)
+mcp_goals_list()`)
 		})
 
 		b.AddSection(3, "Rule Management", func(b *Builder) {
 			b.AddCodeBlock("javascript", `// Add coding standards
-mcp_project-manager_cursor_rules_add({
+mcp_cursor_rules_add({
   name: "Code Quality Standards",
   category: "quality",
   content: "Code quality guidelines..."
 })
 
 // Add specific technology rules
-mcp_project-manager_cursor_rules_add({
+mcp_cursor_rules_add({
   name: "React Best Practices",
   category: "framework",
   content: "React development guidelines..."
@@ -712,12 +712,12 @@ pkill -f mcp-server
 
 		b.AddSection(3, "2. Initialize Database", func(b *Builder) {
 			b.AddCodeBlock("javascript", `// Add test data
-mcp_project-manager_goals_add({
+mcp_goals_add({
   title: "Test Goal"
 })
 
 // Verify tools work
-mcp_project-manager_goals_list()`)
+mcp_goals_list()`)
 		})
 
 		b.AddSection(3, "3. Check Configuration", func(b *Builder) {

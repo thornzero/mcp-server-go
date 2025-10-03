@@ -36,12 +36,12 @@ The MCP tools are now fully functional:
 1. **Initialize Database:**
    ```javascript
    // Add initial goal
-   mcp_project-manager_goals_add({
+   mcp_goals_add({
      title: "Project Setup Complete"
    })
    
    // Add initial rule
-   mcp_project-manager_cursor_rules_add({
+   mcp_cursor_rules_add({
      name: "Project Guidelines",
      category: "general",
      content: "Your project guidelines here..."
@@ -50,8 +50,8 @@ The MCP tools are now fully functional:
 
 2. **Verify Tools Work:**
    ```javascript
-   mcp_project-manager_goals_list()
-   mcp_project-manager_cursor_rules_list()
+   mcp_goals_list()
+   mcp_cursor_rules_list()
    ```
 
 3. **Proceed with Normal Operations**

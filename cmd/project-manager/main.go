@@ -62,157 +62,157 @@ func main() {
 
 	// Add tools
 	mcp.AddTool(mcpServer, &mcp.Tool{
-		Name:        "project_manager_goals_list",
+		Name:        "goals_list",
 		Description: "List active goals from the project",
 	}, goalsHandler.GoalsList)
 
 	mcp.AddTool(mcpServer, &mcp.Tool{
-		Name:        "project_manager_goals_add",
+		Name:        "goals_add",
 		Description: "Add a new goal to the project",
 	}, goalsHandler.GoalsAdd)
 
 	mcp.AddTool(mcpServer, &mcp.Tool{
-		Name:        "project_manager_goals_update",
+		Name:        "goals_update",
 		Description: "Update an existing goal",
 	}, goalsHandler.GoalsUpdate)
 
 	mcp.AddTool(mcpServer, &mcp.Tool{
-		Name:        "project_manager_adrs_list",
+		Name:        "adrs_list",
 		Description: "List Architecture Decision Records (ADRs)",
 	}, adrsHandler.ADRsList)
 
 	mcp.AddTool(mcpServer, &mcp.Tool{
-		Name:        "project_manager_adrs_get",
+		Name:        "adrs_get",
 		Description: "Get the content of a specific ADR",
 	}, adrsHandler.ADRsGet)
 
 	mcp.AddTool(mcpServer, &mcp.Tool{
-		Name:        "project_manager_ci_run_tests",
+		Name:        "ci_run_tests",
 		Description: "Run tests for the project",
 	}, ciHandler.CIRunTests)
 
 	mcp.AddTool(mcpServer, &mcp.Tool{
-		Name:        "project_manager_ci_last_failure",
+		Name:        "ci_last_failure",
 		Description: "Get information about the last test failure",
 	}, ciHandler.CILastFailure)
 
 	mcp.AddTool(mcpServer, &mcp.Tool{
-		Name:        "project_manager_repo_search",
+		Name:        "repo_search",
 		Description: "Search the repository for text patterns",
 	}, searchHandler.RepoSearch)
 
 	mcp.AddTool(mcpServer, &mcp.Tool{
-		Name:        "project_manager_state_log_change",
+		Name:        "state_log_change",
 		Description: "Log a change to the project changelog",
 	}, stateHandler.StateLogChange)
 
 	mcp.AddTool(mcpServer, &mcp.Tool{
-		Name:        "project_manager_changelog_generate",
+		Name:        "changelog_generate",
 		Description: "Generate/update a proper changelog file in the root directory",
 	}, stateHandler.ChangelogGenerate)
 
 	mcp.AddTool(mcpServer, &mcp.Tool{
-		Name:        "project_manager_markdown_lint",
+		Name:        "markdown_lint",
 		Description: "Lint markdown files for formatting issues",
 	}, markdownHandler.MarkdownLint)
 
 	mcp.AddTool(mcpServer, &mcp.Tool{
-		Name:        "project_manager_template_list",
+		Name:        "template_list",
 		Description: "List available markdown templates",
 	}, templatesHandler.TemplateList)
 
 	mcp.AddTool(mcpServer, &mcp.Tool{
-		Name:        "project_manager_template_register",
+		Name:        "template_register",
 		Description: "Register a new markdown template",
 	}, templatesHandler.TemplateRegister)
 
 	mcp.AddTool(mcpServer, &mcp.Tool{
-		Name:        "project_manager_template_get",
+		Name:        "template_get",
 		Description: "Get template details by ID",
 	}, templatesHandler.TemplateGet)
 
 	mcp.AddTool(mcpServer, &mcp.Tool{
-		Name:        "project_manager_template_update",
+		Name:        "template_update",
 		Description: "Update an existing markdown template",
 	}, templatesHandler.TemplateUpdate)
 
 	mcp.AddTool(mcpServer, &mcp.Tool{
-		Name:        "project_manager_template_delete",
+		Name:        "template_delete",
 		Description: "Delete a markdown template",
 	}, templatesHandler.TemplateDelete)
 
 	mcp.AddTool(mcpServer, &mcp.Tool{
-		Name:        "project_manager_template_apply",
+		Name:        "template_apply",
 		Description: "Apply a template to generate markdown content",
 	}, templatesHandler.TemplateApply)
 
 	// Preferred Tools tools
 	mcp.AddTool(mcpServer, &mcp.Tool{
-		Name:        "project_manager_preferred_tools_list",
+		Name:        "preferred_tools_list",
 		Description: "List preferred tools for specific categories and languages",
 	}, preferredToolsHandler.PreferredToolsList)
 
 	mcp.AddTool(mcpServer, &mcp.Tool{
-		Name:        "project_manager_preferred_tools_add",
+		Name:        "preferred_tools_add",
 		Description: "Add a new preferred tool",
 	}, preferredToolsHandler.PreferredToolsAdd)
 
 	mcp.AddTool(mcpServer, &mcp.Tool{
-		Name:        "project_manager_preferred_tools_update",
+		Name:        "preferred_tools_update",
 		Description: "Update an existing preferred tool",
 	}, preferredToolsHandler.PreferredToolsUpdate)
 
 	mcp.AddTool(mcpServer, &mcp.Tool{
-		Name:        "project_manager_preferred_tools_delete",
+		Name:        "preferred_tools_delete",
 		Description: "Delete a preferred tool",
 	}, preferredToolsHandler.PreferredToolsDelete)
 
 	// Cursor Rules tools
 	mcp.AddTool(mcpServer, &mcp.Tool{
-		Name:        "project_manager_cursor_rules_list",
+		Name:        "cursor_rules_list",
 		Description: "List Cursor rules with optional filtering",
 	}, cursorRulesHandler.CursorRulesList)
 
 	mcp.AddTool(mcpServer, &mcp.Tool{
-		Name:        "project_manager_cursor_rules_add",
+		Name:        "cursor_rules_add",
 		Description: "Add a new Cursor rule",
 	}, cursorRulesHandler.CursorRulesAdd)
 
 	mcp.AddTool(mcpServer, &mcp.Tool{
-		Name:        "project_manager_cursor_rules_update",
+		Name:        "cursor_rules_update",
 		Description: "Update an existing Cursor rule",
 	}, cursorRulesHandler.CursorRulesUpdate)
 
 	mcp.AddTool(mcpServer, &mcp.Tool{
-		Name:        "project_manager_cursor_rules_delete",
+		Name:        "cursor_rules_delete",
 		Description: "Delete a Cursor rule",
 	}, cursorRulesHandler.CursorRulesDelete)
 
 	mcp.AddTool(mcpServer, &mcp.Tool{
-		Name:        "project_manager_cursor_rules_suggest",
+		Name:        "cursor_rules_suggest",
 		Description: "Suggest community Cursor rules based on criteria",
 	}, cursorRulesHandler.CursorRulesSuggest)
 
 	mcp.AddTool(mcpServer, &mcp.Tool{
-		Name:        "project_manager_cursor_rules_install",
+		Name:        "cursor_rules_install",
 		Description: "Install a Cursor rule from community repository",
 	}, cursorRulesHandler.CursorRulesInstall)
 
 	// Setup tools
 	mcp.AddTool(mcpServer, &mcp.Tool{
-		Name:        "project_manager_setup_mcp_tools",
+		Name:        "setup_mcp_tools",
 		Description: "Set up MCP tools for a project by creating cursor rules",
 	}, setupHandler.SetupMCPTools)
 
 	// Log parsing tools
 	mcp.AddTool(mcpServer, &mcp.Tool{
-		Name:        "project_manager_log_parse",
+		Name:        "log_parse",
 		Description: "Parse and analyze Cursor/VS Code log files with AI-optimized output",
 	}, logParserHandler.ParseLog)
 
 	// Documentation tools
 	mcp.AddTool(mcpServer, &mcp.Tool{
-		Name:        "project_manager_docs_get",
+		Name:        "docs_get",
 		Description: "Get documentation for a specific Go package or symbol using godoc",
 		Annotations: &mcp.ToolAnnotations{
 			Title:           "Get Go Documentation",
@@ -224,7 +224,7 @@ func main() {
 	}, docsHandler.DocsGet)
 
 	mcp.AddTool(mcpServer, &mcp.Tool{
-		Name:        "project_manager_docs_list",
+		Name:        "docs_list",
 		Description: "List available Go packages in the project for documentation",
 		Annotations: &mcp.ToolAnnotations{
 			Title:           "List Go Packages",
@@ -236,7 +236,7 @@ func main() {
 	}, docsHandler.DocsList)
 
 	mcp.AddTool(mcpServer, &mcp.Tool{
-		Name:        "project_manager_docs_generate",
+		Name:        "docs_generate",
 		Description: "Generate static documentation files for the project using godoc",
 		Annotations: &mcp.ToolAnnotations{
 			Title:           "Generate Documentation",
