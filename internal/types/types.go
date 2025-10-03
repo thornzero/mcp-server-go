@@ -397,11 +397,11 @@ type CursorRulesInstallOutput struct {
 }
 
 // Setup MCP Tools types
-type SetupMCPToolsInput struct {
+type SetupProjectManagerInput struct {
 	ProjectPath string `json:"project_path" jsonschema:"Path to the project directory (required)"`
 }
 
-type SetupMCPToolsOutput struct {
+type SetupProjectManagerOutput struct {
 	Success      bool     `json:"success" jsonschema:"Whether setup was successful"`
 	ProjectPath  string   `json:"project_path" jsonschema:"Resolved project path"`
 	RulesDir     string   `json:"rules_dir" jsonschema:"Path to .cursor/rules directory"`

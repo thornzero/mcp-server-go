@@ -1,17 +1,14 @@
 ---
-description: Project Manager MCP Server - Project Management and Development Assistance
+description: Project Manager Server - Project Management and Development Assistance over Model Context Protocol
 globs: ["**/*"]
 alwaysApply: true
 ---
 
-
-
-
-# Project Manager MCP Server
+# Project Manager Server
 
 ## 🎯 Available Tools
 
-This project has access to Project Manager MCP server tools for enhanced project management and AI assistance.
+This project has access to Project Manager server tools for enhanced project management and AI assistance.
 
 ### 📋 Goals Management
 
@@ -53,15 +50,15 @@ This project has access to Project Manager MCP server tools for enhanced project
 
 ### 🛠️ Preferred Tools Management
 
-- `mcp_project-manager_preferred_tools_list()` - List preferred tools by category/language
-- `mcp_project-manager_preferred_tools_add({name: "Tool Name", category: "category"})` - Add preferred tool
-- `mcp_project-manager_preferred_tools_update({id: 1, name: "Updated Name"})` - Update preferred tool
-- `mcp_project-manager_preferred_tools_delete({id: 1})` - Delete preferred tool
+- `preferred_tools_list()` - List preferred tools by category/language
+- `preferred_tools_add({name: "Tool Name", category: "category"})` - Add preferred tool
+- `preferred_tools_update({id: 1, name: "Updated Name"})` - Update preferred tool
+- `preferred_tools_delete({id: 1})` - Delete preferred tool
 
 ### ⚙️ Setup & Utilities
 
-- `mcp_project-manager_setup_mcp_tools({project_path: "/path/to/project"})` - Set up MCP tools for a project
-- `mcp_project-manager_log_parse({file_path: "path/to/log"})` - Parse and analyze log files
+- `setup_project_manager({project_path: "/path/to/project"})` - Set up Project Manager tools for a project
+- `log_parse({file_path: "path/to/log"})` - Parse and analyze log files
 
 ## 🚀 Getting Started
 
@@ -71,20 +68,20 @@ First, add initial project data:
 
 ```javascript
 // Add initial project goal
-mcp_project-manager_goals_add({
+goals_add({
   title: "Project Setup Complete"
 })
 
 // Add project guidelines rule
-mcp_project-manager_cursor_rules_add({
+cursor_rules_add({
   name: "Project Guidelines",
   category: "general",
   content: "Your project guidelines here..."
 })
 
 // Verify tools work
-mcp_project-manager_goals_list()
-mcp_project-manager_cursor_rules_list()
+goals_list()
+cursor_rules_list()
 ```
 
 ### 2. Use Tools Regularly
@@ -105,10 +102,10 @@ mcp_project-manager_cursor_rules_list()
 
 If tools don't work:
 
-- Check if MCP server is configured in Cursor settings
+- Check if Project Manager server is configured in Cursor settings
 - Restart Cursor completely
 - Verify database exists: `.agent/state.db`
-- Try adding test data first: `mcp_project-manager_goals_add({title: "Test"})`
+- Try adding test data first: `goals_add({title: "Test"})`
 
 ## 🏗️ Go Project Structure & Testing
 
@@ -172,8 +169,8 @@ go test -cover ./...
 
 ## 📚 Documentation
 
-- **Usage Guide**: See mcp-tools-usage.mdc
-- **Troubleshooting**: See mcp-tools-troubleshooting.mdc
+- **Usage Guide**: See project-manager-usage.mdc
+- **Troubleshooting**: See project-manager-troubleshooting.mdc
 - **Full Documentation**: /home/thornzero/Repositories/mcp-server-go/docs/
 
 ---

@@ -169,6 +169,7 @@ echo '{"jsonrpc": "2.0", "id": 1, "method": "tools/list"}' | ./build/mcp-server
 4. **Verify Configuration** in Cursor settings
 
 5. **Test Basic Functionality:**
+
    ```javascript
    mcp_goals_add({ title: "Test Goal" })
    mcp_goals_list()
@@ -177,12 +178,14 @@ echo '{"jsonrpc": "2.0", "id": 1, "method": "tools/list"}' | ./build/mcp-server
 ## 📊 **Success Indicators**
 
 ✅ **Working Correctly:**
-- MCP tools respond without errors
+
+- Project Manager tools respond without errors
 - Database persists between sessions
 - No manual server management needed
 - Consistent tool behavior
 
 ❌ **Not Working:**
+
 - "Not connected" errors
 - Tools fail intermittently
 - Need to manually start server

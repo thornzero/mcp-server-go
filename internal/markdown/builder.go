@@ -314,7 +314,7 @@ func (b *Builder) ValidateMarkdown() error {
 }
 
 // MCPToolsRuleBuilder builds the Project Manager MCP tools rule markdown
-func MCPToolsRuleBuilder(mcpServerPath string) *Builder {
+func ProjectManagerRuleBuilder(mcpServerPath string) *Builder {
 	b := NewBuilder()
 
 	// Front matter
@@ -336,9 +336,9 @@ func MCPToolsRuleBuilder(mcpServerPath string) *Builder {
 		// Goals Management
 		b.AddSection(3, "📋 Goals Management", func(b *Builder) {
 			b.AddList([]string{
-				"mcp_goals_list() - List active project goals",
-				"mcp_goals_add({title: \"Goal Title\"}) - Add new goal",
-				"mcp_goals_update({id: 1, status: \"done\"}) - Update goal status",
+				"goals_list() - List active project goals",
+				"goals_add({title: \"Goal Title\"}) - Add new goal",
+				"goals_update({id: 1, status: \"done\"}) - Update goal status",
 			})
 		})
 
@@ -450,7 +450,7 @@ mcp_cursor_rules_list()`)
 	b.AddSection(2, "🔧 Troubleshooting", func(b *Builder) {
 		b.AddParagraph("If tools don't work:")
 		b.AddList([]string{
-			"Check if MCP server is configured in Cursor settings",
+			"Check if Project Manager server is configured in Cursor settings",
 			"Restart Cursor completely",
 			"Verify database exists: `.agent/state.db`",
 			"Try adding test data first: `mcp_goals_add({title: \"Test\"})`",
@@ -660,28 +660,28 @@ mcp_cursor_rules_add({
 }
 
 // MCPTroubleshootingGuideBuilder builds the MCP troubleshooting guide markdown
-func MCPTroubleshootingGuideBuilder(mcpServerPath string) *Builder {
+func ProjectManagerTroubleshootingGuideBuilder(mcpServerPath string) *Builder {
 	b := NewBuilder()
 
 	// Front matter
 	b.AddParagraph("---")
-	b.AddParagraph("description: Troubleshooting guide for MCP server tools")
+	b.AddParagraph("description: Troubleshooting guide for Project Manager server tools")
 	b.AddParagraph("globs: [\"**/*\"]")
 	b.AddParagraph("alwaysApply: false")
 	b.AddParagraph("---")
 	b.AddLineBreak()
 
 	// Main header
-	b.AddHeader(1, "MCP Tools Troubleshooting")
+	b.AddHeader(1, "Project Manager Tools Troubleshooting")
 
 	// Common Issues section
 	b.AddSection(2, "🚨 Common Issues", func(b *Builder) {
 		b.AddSection(3, "\"Not connected\" Error", func(b *Builder) {
 			b.AddCodeBlock("json", `{"error":"Not connected"}`)
-			b.AddParagraph("**Cause**: MCP server not properly configured in Cursor")
+			b.AddParagraph("**Cause**: Project Manager server not properly configured in Cursor")
 			b.AddParagraph("**Solution**:")
 			b.AddList([]string{
-				"Check Cursor MCP configuration",
+				"Check Cursor Project Manager configuration",
 				"Restart Cursor completely",
 				"Verify server binary exists",
 			})
@@ -694,7 +694,7 @@ func MCPTroubleshootingGuideBuilder(mcpServerPath string) *Builder {
 		})
 
 		b.AddSection(3, "JSON Schema Validation Errors", func(b *Builder) {
-			b.AddCodeBlock("text", `MCP error 0: validating tool output: type: <invalid reflect.Value> has type "null", want "array"`)
+			b.AddCodeBlock("text", `Project Manager error 0: validating tool output: type: <invalid reflect.Value> has type "null", want "array"`)
 			b.AddParagraph("**Cause**: Empty database state")
 			b.AddParagraph("**Solution**: Initialize with test data first")
 		})
@@ -704,7 +704,7 @@ func MCPTroubleshootingGuideBuilder(mcpServerPath string) *Builder {
 	b.AddSection(2, "🔧 Quick Fixes", func(b *Builder) {
 		b.AddSection(3, "1. Restart Everything", func(b *Builder) {
 			b.AddCodeBlock("bash", `# Kill any existing processes
-pkill -f mcp-server
+pkill -f project-manager
 
 # Restart Cursor
 # (Close and reopen Cursor application)`)
@@ -722,7 +722,7 @@ mcp_goals_list()`)
 
 		b.AddSection(3, "3. Check Configuration", func(b *Builder) {
 			b.AddList([]string{
-				"Verify MCP server path in Cursor settings",
+				"Verify Project Manager server path in Cursor settings",
 				"Ensure server binary exists and is executable",
 				"Check database file exists: `.agent/state.db`",
 			})
@@ -732,7 +732,7 @@ mcp_goals_list()`)
 	// Diagnostic Checklist section
 	b.AddSection(2, "📋 Diagnostic Checklist", func(b *Builder) {
 		b.AddChecklist([]string{
-			"Cursor MCP server configured",
+			"Cursor Project Manager server configured",
 			"No multiple server processes running",
 			"Database file exists and has content",
 			"Server binary is up-to-date",
@@ -744,7 +744,7 @@ mcp_goals_list()`)
 	b.AddSection(2, "📞 Support", func(b *Builder) {
 		b.AddList([]string{
 			fmt.Sprintf("**Documentation**: %s/docs/", mcpServerPath),
-			fmt.Sprintf("**Server Path**: %s/build/mcp-server", mcpServerPath),
+			fmt.Sprintf("**Server Path**: %s/build/project-manager", mcpServerPath),
 			"**Database**: `.agent/state.db`",
 		})
 	})

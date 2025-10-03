@@ -200,9 +200,9 @@ func main() {
 
 	// Setup tools
 	mcp.AddTool(mcpServer, &mcp.Tool{
-		Name:        "setup_mcp_tools",
-		Description: "Set up MCP tools for a project by creating cursor rules",
-	}, setupHandler.SetupMCPTools)
+		Name:        "setup_project_manager",
+		Description: "Set up Project Manager tools for a project by creating cursor rules",
+	}, setupHandler.SetupProjectManager)
 
 	// Log parsing tools
 	mcp.AddTool(mcpServer, &mcp.Tool{

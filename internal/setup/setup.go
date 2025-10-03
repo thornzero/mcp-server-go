@@ -4,12 +4,12 @@ package setup
 import (
 	"context"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
-	"github.com/thornzero/project-manager/internal/markdown"
 	"github.com/thornzero/project-manager/internal/server"
 	"github.com/thornzero/project-manager/internal/types"
 )
@@ -75,10 +75,10 @@ func (h *SetupHandler) shouldCreateGenericRules(projectPath string) bool {
 	return true
 }
 
-func (h *SetupHandler) SetupMCPTools(ctx context.Context, req *mcp.CallToolRequest, input types.SetupMCPToolsInput) (*mcp.CallToolResult, types.SetupMCPToolsOutput, error) {
+func (h *SetupHandler) SetupProjectManager(ctx context.Context, req *mcp.CallToolRequest, input types.SetupProjectManagerInput) (*mcp.CallToolResult, types.SetupProjectManagerOutput, error) {
 	// Validate input
 	if input.ProjectPath == "" {
-		return nil, types.SetupMCPToolsOutput{}, fmt.Errorf("project_path is required")
+		return nil, types.SetupProjectManagerOutput{}, fmt.Errorf("project_path is required")
 	}
 
 	// Resolve project path
@@ -87,20 +87,20 @@ func (h *SetupHandler) SetupMCPTools(ctx context.Context, req *mcp.CallToolReque
 		// If relative path, resolve relative to current working directory
 		cwd, err := os.Getwd()
 		if err != nil {
-			return nil, types.SetupMCPToolsOutput{}, fmt.Errorf("failed to get current working directory: %v", err)
+			return nil, types.SetupProjectManagerOutput{}, fmt.Errorf("failed to get current working directory: %v", err)
 		}
 		projectPath = filepath.Join(cwd, projectPath)
 	}
 
 	// Check if project path exists
 	if _, err := os.Stat(projectPath); os.IsNotExist(err) {
-		return nil, types.SetupMCPToolsOutput{}, fmt.Errorf("project path does not exist: %s", projectPath)
+		return nil, types.SetupProjectManagerOutput{}, fmt.Errorf("project path does not exist: %s", projectPath)
 	}
 
 	// Create .cursor/rules directory if it doesn't exist
 	rulesDir := filepath.Join(projectPath, ".cursor", "rules")
 	if err := os.MkdirAll(rulesDir, 0755); err != nil {
-		return nil, types.SetupMCPToolsOutput{}, fmt.Errorf("failed to create rules directory: %v", err)
+		return nil, types.SetupProjectManagerOutput{}, fmt.Errorf("failed to create rules directory: %v", err)
 	}
 
 	// Detect project type
@@ -111,32 +111,27 @@ func (h *SetupHandler) SetupMCPTools(ctx context.Context, req *mcp.CallToolReque
 
 	var filesCreated []string
 
-	// Always create MCP-specific rules
+	// Copy Project Manager rule files from docs/generated/
 	mcpServerPath := h.server.GetRepoRoot()
+	sourceDir := filepath.Join(mcpServerPath, "docs", "generated")
 
-	// Generate MCP tools rule using markdown builder
-	ruleBuilder := markdown.MCPToolsRuleBuilder(mcpServerPath)
-	rulePath := filepath.Join(rulesDir, "mcp-tools.mdc")
-	if err := ruleBuilder.WriteToFile(rulePath); err != nil {
-		return nil, types.SetupMCPToolsOutput{}, fmt.Errorf("failed to write MCP tools rule: %v", err)
+	// List of rule files to copy
+	ruleFiles := []string{
+		"project-manager-tools.mdc",
+		"project-manager-tools-usage.mdc",
+		"project-manager-tools-troubleshooting.mdc",
 	}
-	filesCreated = append(filesCreated, "mcp-tools.mdc")
 
-	// Generate MCP usage guide using markdown builder
-	usageBuilder := markdown.MCPUsageGuideBuilder()
-	usagePath := filepath.Join(rulesDir, "mcp-tools-usage.mdc")
-	if err := usageBuilder.WriteToFile(usagePath); err != nil {
-		return nil, types.SetupMCPToolsOutput{}, fmt.Errorf("failed to write MCP usage guide: %v", err)
-	}
-	filesCreated = append(filesCreated, "mcp-tools-usage.mdc")
+	for _, filename := range ruleFiles {
+		sourcePath := filepath.Join(sourceDir, filename)
+		destPath := filepath.Join(rulesDir, filename)
 
-	// Generate MCP troubleshooting guide using markdown builder
-	troubleshootingBuilder := markdown.MCPTroubleshootingGuideBuilder(mcpServerPath)
-	troubleshootingPath := filepath.Join(rulesDir, "mcp-tools-troubleshooting.mdc")
-	if err := troubleshootingBuilder.WriteToFile(troubleshootingPath); err != nil {
-		return nil, types.SetupMCPToolsOutput{}, fmt.Errorf("failed to write MCP troubleshooting guide: %v", err)
+		// Copy file from source to destination
+		if err := h.copyFile(sourcePath, destPath); err != nil {
+			return nil, types.SetupProjectManagerOutput{}, fmt.Errorf("failed to copy %s: %v", filename, err)
+		}
+		filesCreated = append(filesCreated, filename)
 	}
-	filesCreated = append(filesCreated, "mcp-tools-troubleshooting.mdc")
 
 	// Only create generic rules if appropriate
 	if shouldCreateGeneric {
@@ -156,12 +151,12 @@ func (h *SetupHandler) SetupMCPTools(ctx context.Context, req *mcp.CallToolReque
 	}
 
 	// Return success result
-	return nil, types.SetupMCPToolsOutput{
+	return nil, types.SetupProjectManagerOutput{
 		Success:      true,
 		ProjectPath:  projectPath,
 		RulesDir:     rulesDir,
 		FilesCreated: filesCreated,
-		Message:      fmt.Sprintf("MCP tools setup complete! Created %d files. Restart Cursor to load the new rules.", len(filesCreated)),
+		Message:      fmt.Sprintf("Project Manager tools setup complete! Created %d files. Restart Cursor to load the new rules.", len(filesCreated)),
 	}, nil
 }
 
@@ -332,4 +327,26 @@ alwaysApply: true
 	if err := os.WriteFile(genericRulePath, []byte(genericRule), 0644); err == nil {
 		*filesCreated = append(*filesCreated, "general-guidelines.mdc")
 	}
+}
+
+// copyFile copies a file from source to destination
+func (h *SetupHandler) copyFile(src, dst string) error {
+	sourceFile, err := os.Open(src)
+	if err != nil {
+		return err
+	}
+	defer sourceFile.Close()
+
+	destFile, err := os.Create(dst)
+	if err != nil {
+		return err
+	}
+	defer destFile.Close()
+
+	_, err = io.Copy(destFile, sourceFile)
+	if err != nil {
+		return err
+	}
+
+	return destFile.Sync()
 }
