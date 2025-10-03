@@ -86,12 +86,19 @@ func (s *Server) GetDocsOutputPath() string {
 }
 
 func (s *Server) migrateChangelogToDB() {
-	changelogPath := filepath.Join(s.repoRoot, "CHANGELOG_AGENT.md")
+	changelogPath := filepath.Join(s.repoRoot, "CHANGELOG.md")
 	content, err := os.ReadFile(changelogPath)
 	if err != nil {
-		return // CHANGELOG_AGENT.md doesn't exist, skip migration
+		return // CHANGELOG.md doesn't exist, skip migration
 	}
 
+	// Check if this is the new Keep a Changelog format
+	if strings.Contains(string(content), "# Changelog") {
+		// This is the new format, skip migration as it's not compatible
+		return
+	}
+
+	// Legacy migration for old format: "- timestamp — summary"
 	lines := strings.Split(string(content), "\n")
 	for _, line := range lines {
 		line = strings.TrimSpace(line)

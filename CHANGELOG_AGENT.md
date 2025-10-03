@@ -1,4 +1,0 @@
-- 2025-10-03T10:50:41-04:00 — Started Phase 1: Extract Shared Infrastructure - Created shared directory structure
-  - files: shared/database, shared/session, shared/router, shared/handlers, shared/views, shared/config, shared/services, shared/interfaces
-- 2025-10-03T10:51:43-04:00 — Extracted core services to shared directory structure
-  - files: shared/database/gorm_service.go, shared/database/database_config.go, shared/session/session.go, shared/router/router.go, shared/handlers/handlers.go, shared/handlers/view_handlers.go, shared/config/env.go, shared/models/, shared/views/
