@@ -111,9 +111,9 @@ func (h *SetupHandler) SetupProjectManager(ctx context.Context, req *mcp.CallToo
 
 	var filesCreated []string
 
-	// Copy Project Manager rule files from docs/generated/
+	// Copy Project Manager rule files from docs/rules/
 	mcpServerPath := h.server.GetRepoRoot()
-	sourceDir := filepath.Join(mcpServerPath, "docs", "generated")
+	sourceDir := filepath.Join(mcpServerPath, "docs", "rules")
 
 	// List of rule files to copy
 	ruleFiles := []string{

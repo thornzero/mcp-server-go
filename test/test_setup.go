@@ -21,12 +21,12 @@ func main() {
 	// Create setup handler
 	setupHandler := setup.NewSetupHandler(srv)
 
-	// Test setup_mcp_tools
-	input := types.SetupMCPToolsInput{
-		ProjectPath: "/tmp/test-mcp-setup",
+	// Test setup_project_manager
+	input := types.SetupProjectManagerInput{
+		ProjectPath: "/tmp/test-project-manager-setup",
 	}
 
-	result, output, err := setupHandler.SetupMCPTools(context.Background(), nil, input)
+	result, output, err := setupHandler.SetupProjectManager(context.Background(), nil, input)
 	if err != nil {
 		log.Fatal("Setup failed:", err)
 	}
