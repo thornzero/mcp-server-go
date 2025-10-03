@@ -77,21 +77,21 @@ mcp_mcp-server-go_goals_list()
 
 - Verify MCP server path in Cursor settings
 - Ensure server binary exists and is executable
-- Check database file exists: .agent/state.db
+- Check database file exists: `.agent/state.db`
 
 ## 📋 Diagnostic Checklist
 
-- - [ ] Cursor MCP server configured
-- - [ ] No multiple server processes running
-- - [ ] Database file exists and has content
-- - [ ] Server binary is up-to-date
-- - [ ] Cursor restarted after configuration
+- [ ] Cursor MCP server configured
+- [ ] No multiple server processes running
+- [ ] Database file exists and has content (`.agent/state.db`)
+- [ ] Server binary is up-to-date
+- [ ] Cursor restarted after configuration
 
 ## 📞 Support
 
 - **Documentation**: /home/thornzero/Repositories/mcp-server-go/docs/
 - **Server Path**: /home/thornzero/Repositories/mcp-server-go/build/mcp-server
-- **Database**: .agent/state.db
+- **Database**: `{repo_root}/.agent/state.db`
 
 ---
 

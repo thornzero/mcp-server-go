@@ -18,7 +18,7 @@ type Goal struct {
 type ADR struct {
 	ID        string    `gorm:"primaryKey" json:"id"`
 	Title     string    `gorm:"not null" json:"title"`
-	Path      string    `gorm:"not null" json:"path"`
+	Content   string    `gorm:"type:text" json:"content"`
 	UpdatedAt time.Time `gorm:"autoUpdateTime" json:"updated_at"`
 }
 
@@ -74,9 +74,17 @@ type CursorRule struct {
 	Category    string    `gorm:"not null" json:"category"`
 	Description string    `gorm:"default:''" json:"description"`
 	Content     string    `gorm:"not null" json:"content"`
-	Tags        string    `gorm:"default:''" json:"tags"` // comma-separated tags
+	Tags        string    `gorm:"default:''" json:"tags"`        // comma-separated tags
 	Source      string    `gorm:"default:'local'" json:"source"` // local, community, custom
 	IsActive    bool      `gorm:"default:true" json:"is_active"`
 	CreatedAt   time.Time `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt   time.Time `gorm:"autoUpdateTime" json:"updated_at"`
+}
+
+// ChangelogEntry represents a changelog entry
+type ChangelogEntry struct {
+	ID        uint      `gorm:"primaryKey" json:"id"`
+	Summary   string    `gorm:"not null" json:"summary"`
+	Files     string    `json:"files"` // comma-separated list of files
+	CreatedAt time.Time `gorm:"autoCreateTime" json:"created_at"`
 }

@@ -51,7 +51,7 @@ type ADRsListOutput struct {
 type ADR struct {
 	ID        string `json:"id" jsonschema:"ADR identifier (e.g., ADR-001)"`
 	Title     string `json:"title" jsonschema:"ADR title or subject"`
-	Path      string `json:"path" jsonschema:"File path to the ADR document"`
+	Content   string `json:"content" jsonschema:"Full content of the ADR document"`
 	UpdatedAt string `json:"updated_at" jsonschema:"Last modification timestamp"`
 }
 
@@ -61,7 +61,7 @@ type ADRsGetInput struct {
 
 type ADRsGetOutput struct {
 	ID      string `json:"id" jsonschema:"ADR identifier"`
-	Path    string `json:"path" jsonschema:"File path to the ADR document"`
+	Title   string `json:"title" jsonschema:"ADR title"`
 	Content string `json:"content" jsonschema:"Full content of the ADR document"`
 }
 
@@ -436,4 +436,16 @@ type AnalysisContext struct {
 	MostCommonIssue string `json:"most_common_issue" jsonschema:"Description of the most frequent issue"`
 	SeverityLevel   string `json:"severity_level" jsonschema:"Overall severity assessment"`
 	Environment     string `json:"environment" jsonschema:"Development environment assessment"`
+}
+
+// Changelog generation inputs and outputs
+type ChangelogGenerateInput struct {
+	Format string `json:"format,omitempty" jsonschema:"Output format: markdown, json (default: markdown)"`
+	Limit  int    `json:"limit,omitempty" jsonschema:"Maximum number of entries to include (0 = no limit)"`
+}
+
+type ChangelogGenerateOutput struct {
+	Content string `json:"content" jsonschema:"Generated changelog content"`
+	Path    string `json:"path" jsonschema:"Path where changelog was written"`
+	Entries int    `json:"entries" jsonschema:"Number of entries included"`
 }

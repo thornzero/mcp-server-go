@@ -81,6 +81,56 @@ mcp_mcp-server-go_cursor_rules_add({
   category: "framework",
   content: "React development guidelines..."
 })
+
+// Install community rules
+mcp_mcp-server-go_cursor_rules_install({
+  rule_name: "typescript-best-practices"
+})
+
+// Suggest rules by category
+mcp_mcp-server-go_cursor_rules_suggest({
+  category: "testing"
+})
+```
+
+### Template Management
+
+```javascript
+// Register a new template
+mcp_mcp-server-go_template_register({
+  id: "api-doc",
+  name: "API Documentation Template",
+  category: "documentation",
+  content: "# {{.Title}}\n\n{{.Description}}\n\n## Endpoints\n{{.Endpoints}}"
+})
+
+// Apply template with variables
+mcp_mcp-server-go_template_apply({
+  template_id: "api-doc",
+  variables: {
+    title: "User API",
+    description: "User management endpoints",
+    endpoints: "- GET /users\n- POST /users"
+  }
+})
+```
+
+### Preferred Tools Management
+
+```javascript
+// Add preferred tools for specific categories
+mcp_mcp-server-go_preferred_tools_add({
+  name: "ESLint",
+  category: "linting",
+  language: "javascript",
+  description: "JavaScript linter"
+})
+
+// List tools by category
+mcp_mcp-server-go_preferred_tools_list({
+  category: "testing",
+  language: "javascript"
+})
 ```
 
 ## 📊 Best Practices

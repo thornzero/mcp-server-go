@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -17,9 +18,14 @@ type Server struct {
 }
 
 func NewServer(repoRoot string) (*Server, error) {
-	// Initialize database
-	dbPath := filepath.Join(repoRoot, ".agent", "state.db")
-	_ = os.MkdirAll(filepath.Dir(dbPath), 0o755)
+	// Create .agent directory if it doesn't exist
+	agentDir := filepath.Join(repoRoot, ".agent")
+	if err := os.MkdirAll(agentDir, 0755); err != nil {
+		return nil, fmt.Errorf("failed to create .agent directory: %v", err)
+	}
+
+	// Initialize database in .agent directory
+	dbPath := filepath.Join(agentDir, "state.db")
 
 	db, err := gorm.Open(sqlite.Open(dbPath), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Silent),
@@ -37,13 +43,14 @@ func NewServer(repoRoot string) (*Server, error) {
 		&models.TemplateVariable{},
 		&models.PreferredTool{},
 		&models.CursorRule{},
+		&models.ChangelogEntry{},
 	)
 	if err != nil {
 		return nil, err
 	}
 
 	server := &Server{db: db, repoRoot: repoRoot}
-	server.scanADRs()
+	server.migrateChangelogToDB()
 
 	return server, nil
 }
@@ -78,27 +85,42 @@ func (s *Server) GetDocsOutputPath() string {
 	return filepath.Join(s.repoRoot, "docs")
 }
 
-func (s *Server) scanADRs() {
-	adrDir := filepath.Join(s.repoRoot, "ADR")
-	entries, err := os.ReadDir(adrDir)
+func (s *Server) migrateChangelogToDB() {
+	changelogPath := filepath.Join(s.repoRoot, "CHANGELOG_AGENT.md")
+	content, err := os.ReadFile(changelogPath)
 	if err != nil {
-		return // ADR directory doesn't exist, skip
+		return // CHANGELOG_AGENT.md doesn't exist, skip migration
 	}
 
-	for _, e := range entries {
-		if e.IsDir() || !strings.HasSuffix(e.Name(), ".md") {
+	lines := strings.Split(string(content), "\n")
+	for _, line := range lines {
+		line = strings.TrimSpace(line)
+		if line == "" || !strings.HasPrefix(line, "- ") {
 			continue
 		}
-		p := filepath.Join("ADR", e.Name())
-		id := strings.ToUpper(strings.TrimSuffix(strings.ReplaceAll(e.Name(), "-", ""), ".md"))
-		title := strings.TrimSuffix(strings.TrimPrefix(e.Name(), "0000-"), ".md")
 
-		// Use GORM's FirstOrCreate to insert or update
-		adr := models.ADR{
-			ID:    id,
-			Title: title,
-			Path:  p,
+		// Parse the line format: "- timestamp — summary"
+		parts := strings.SplitN(line, " — ", 2)
+		if len(parts) != 2 {
+			continue
 		}
-		s.db.FirstOrCreate(&adr, models.ADR{ID: id})
+
+		summary := strings.TrimSpace(parts[1])
+		if summary == "" {
+			continue
+		}
+
+		// Check if this entry already exists in the database
+		var existing models.ChangelogEntry
+		err := s.db.Where("summary = ?", summary).First(&existing).Error
+		if err == nil {
+			continue // Entry already exists, skip
+		}
+
+		// Create new changelog entry
+		entry := models.ChangelogEntry{
+			Summary: summary,
+		}
+		s.db.Create(&entry)
 	}
 }

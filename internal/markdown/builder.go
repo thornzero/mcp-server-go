@@ -89,6 +89,35 @@ func (b *Builder) AddWrappedList(items []string, width int) *Builder {
 	return b
 }
 
+func (b *Builder) AddDefinitionList(items map[string]string) *Builder {
+	list := &ast.List{
+		ListFlags: ast.ListTypeDefinition,
+	}
+
+	for key, value := range items {
+		// Create term (key) list item
+		termItem := &ast.ListItem{
+			ListFlags: ast.ListTypeTerm,
+		}
+		termParagraph := &ast.Paragraph{}
+		termParagraph.Literal = []byte(key)
+		ast.AppendChild(termItem, termParagraph)
+		ast.AppendChild(list, termItem)
+
+		// Create definition (value) list item
+		defItem := &ast.ListItem{
+			ListFlags: ast.ListTypeDefinition,
+		}
+		defParagraph := &ast.Paragraph{}
+		defParagraph.Literal = []byte(value)
+		ast.AppendChild(defItem, defParagraph)
+		ast.AppendChild(list, defItem)
+	}
+
+	ast.AppendChild(b.doc, list)
+	return b
+}
+
 // AddCodeBlock adds a code block
 func (b *Builder) AddCodeBlock(language, code string) *Builder {
 	codeBlock := &ast.CodeBlock{}
@@ -222,7 +251,17 @@ func (b *Builder) String() string {
 			if len(n.GetChildren()) > 0 {
 				if para, ok := n.GetChildren()[0].(*ast.Paragraph); ok {
 					text := string(para.Literal)
-					result.WriteString(fmt.Sprintf("- %s\n", text))
+					// Check if this is a definition list item
+					if n.ListFlags&ast.ListTypeDefinition != 0 {
+						// This is a definition (value) - indent it
+						result.WriteString(fmt.Sprintf(": %s\n", text))
+					} else if n.ListFlags&ast.ListTypeTerm != 0 {
+						// This is a term (key) - no prefix needed, just the term
+						result.WriteString(fmt.Sprintf("%s\n", text))
+					} else {
+						// Regular list item
+						result.WriteString(fmt.Sprintf("- %s\n", text))
+					}
 				}
 			}
 		case *ast.CodeBlock:
@@ -387,7 +426,7 @@ mcp_mcp-server-go_cursor_rules_list()`)
 		b.AddList([]string{
 			"Check if MCP server is configured in Cursor settings",
 			"Restart Cursor completely",
-			"Verify database exists: .agent/state.db",
+			"Verify database exists: `.agent/state.db`",
 			"Try adding test data first: mcp_mcp-server-go_goals_add({title: \"Test\"})",
 		})
 	})
@@ -596,7 +635,7 @@ mcp_mcp-server-go_goals_list()`)
 			b.AddList([]string{
 				"Verify MCP server path in Cursor settings",
 				"Ensure server binary exists and is executable",
-				"Check database file exists: .agent/state.db",
+				"Check database file exists: `.agent/state.db`",
 			})
 		})
 	})
@@ -617,7 +656,7 @@ mcp_mcp-server-go_goals_list()`)
 		b.AddList([]string{
 			fmt.Sprintf("**Documentation**: %s/docs/", mcpServerPath),
 			fmt.Sprintf("**Server Path**: %s/build/mcp-server", mcpServerPath),
-			"**Database**: .agent/state.db",
+			"**Database**: `.agent/state.db`",
 		})
 	})
 

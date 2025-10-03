@@ -2,8 +2,6 @@ package adrs
 
 import (
 	"context"
-	"os"
-	"path/filepath"
 	"strings"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
@@ -26,7 +24,7 @@ func (h *ADRsHandler) ADRsList(ctx context.Context, req *mcp.CallToolRequest, in
 
 	if input.Query != nil && strings.TrimSpace(*input.Query) != "" {
 		searchTerm := "%" + *input.Query + "%"
-		query = query.Where("title LIKE ? OR id LIKE ?", searchTerm, searchTerm)
+		query = query.Where("title LIKE ? OR id LIKE ? OR content LIKE ?", searchTerm, searchTerm, searchTerm)
 	}
 
 	err := query.Find(&adrs).Error
@@ -40,7 +38,7 @@ func (h *ADRsHandler) ADRsList(ctx context.Context, req *mcp.CallToolRequest, in
 		resultADRs = append(resultADRs, types.ADR{
 			ID:        adr.ID,
 			Title:     adr.Title,
-			Path:      adr.Path,
+			Content:   adr.Content,
 			UpdatedAt: adr.UpdatedAt.Format("2006-01-02 15:04:05"),
 		})
 	}
@@ -55,14 +53,9 @@ func (h *ADRsHandler) ADRsGet(ctx context.Context, req *mcp.CallToolRequest, inp
 		return nil, types.ADRsGetOutput{}, err
 	}
 
-	content, err := os.ReadFile(filepath.Join(h.server.GetRepoRoot(), adr.Path))
-	if err != nil {
-		return nil, types.ADRsGetOutput{}, err
-	}
-
 	return nil, types.ADRsGetOutput{
 		ID:      adr.ID,
-		Path:    adr.Path,
-		Content: string(content),
+		Title:   adr.Title,
+		Content: adr.Content,
 	}, nil
 }

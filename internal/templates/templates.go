@@ -235,6 +235,10 @@ func (h *TemplatesHandler) TemplateApply(ctx context.Context, req *mcp.CallToolR
 	}
 
 	content := result.String()
+
+	// Apply line wrapping to prevent long lines
+	content = h.wrapTemplateContent(content)
+
 	outputPath := ""
 
 	// Write to file if output path specified or if template should auto-write
@@ -276,4 +280,28 @@ func (h *TemplatesHandler) TemplateApply(ctx context.Context, req *mcp.CallToolR
 	}
 
 	return nil, types.TemplateApplyOutput{Content: content, Path: outputPath}, nil
+}
+
+// wrapTemplateContent applies line wrapping to template-generated content
+func (h *TemplatesHandler) wrapTemplateContent(content string) string {
+	lines := strings.Split(content, "\n")
+	var wrappedLines []string
+
+	for _, line := range lines {
+		// Skip wrapping for code blocks, headers, and list items
+		if strings.HasPrefix(line, "```") || strings.HasPrefix(line, "#") || strings.HasPrefix(line, "- ") || strings.HasPrefix(line, "* ") || strings.HasPrefix(line, "  ") {
+			wrappedLines = append(wrappedLines, line)
+			continue
+		}
+
+		// Wrap long lines (over 80 characters)
+		if len(line) > 80 {
+			wrappedText := markdown.WrapText(line, 80)
+			wrappedLines = append(wrappedLines, wrappedText...)
+		} else {
+			wrappedLines = append(wrappedLines, line)
+		}
+	}
+
+	return strings.Join(wrappedLines, "\n")
 }
