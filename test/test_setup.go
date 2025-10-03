@@ -5,14 +5,14 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/thornzero/mcp-server-go/internal/server"
-	"github.com/thornzero/mcp-server-go/internal/setup"
-	"github.com/thornzero/mcp-server-go/internal/types"
+	"github.com/thornzero/project-manager/internal/server"
+	"github.com/thornzero/project-manager/internal/setup"
+	"github.com/thornzero/project-manager/internal/types"
 )
 
 func main() {
 	// Initialize server
-	srv, err := server.NewServer("/home/thornzero/Repositories/mcp-server-go")
+	srv, err := server.NewServer("/home/thornzero/Repositories/project-manager")
 	if err != nil {
 		log.Fatal(err)
 	}

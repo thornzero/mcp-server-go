@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/thornzero/mcp-server-go/internal/server"
-	"github.com/thornzero/mcp-server-go/internal/types"
+	"github.com/thornzero/project-manager/internal/server"
+	"github.com/thornzero/project-manager/internal/types"
 )
 
 func TestGoalsHandler_GoalsList(t *testing.T) {

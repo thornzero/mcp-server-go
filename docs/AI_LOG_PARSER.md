@@ -4,7 +4,7 @@ A Go-based log parser integrated into the MCP server, specifically designed for 
 
 ## Features
 
-- **MCP Integration**: Available as `mcp_mcp-server-go_log_parse()` tool
+- **MCP Integration**: Available as `mcp_project-manager_log_parse()` tool
 - **Multiple Output Formats**: JSON, summary, detailed, and AI-friendly formats
 - **Comprehensive Error Analysis**: Categorizes errors by type and severity
 - **Critical Issue Detection**: Identifies disk space, syntax, and permission errors
@@ -20,7 +20,7 @@ The log parser is now integrated into the MCP server as a tool. Use it directly 
 make build
 
 # The log parser is now available as an MCP tool
-# Use: mcp_mcp-server-go_log_parse()
+# Use: mcp_project-manager_log_parse()
 ```
 
 ## MCP Tool Usage
@@ -28,16 +28,16 @@ make build
 ### Basic Usage
 ```javascript
 // Parse default log file with AI-friendly output
-mcp_mcp-server-go_log_parse()
+mcp_project-manager_log_parse()
 
 // Parse specific log file
-mcp_mcp-server-go_log_parse({file_path: "/path/to/log.json"})
+mcp_project-manager_log_parse({file_path: "/path/to/log.json"})
 
 // Get JSON output for programmatic analysis
-mcp_mcp-server-go_log_parse({format: "json"})
+mcp_project-manager_log_parse({format: "json"})
 
 // Get summary output
-mcp_mcp-server-go_log_parse({format: "summary"})
+mcp_project-manager_log_parse({format: "summary"})
 ```
 
 ### Parameters
@@ -129,17 +129,17 @@ make build
 
 ### Quick Status Check
 ```javascript
-mcp_mcp-server-go_log_parse({format: "summary"})
+mcp_project-manager_log_parse({format: "summary"})
 ```
 
 ### Programmatic Analysis
 ```javascript
-mcp_mcp-server-go_log_parse({format: "json"})
+mcp_project-manager_log_parse({format: "json"})
 ```
 
 ### AI-Assisted Debugging
 ```javascript
-mcp_mcp-server-go_log_parse({format: "ai-friendly"})
+mcp_project-manager_log_parse({format: "ai-friendly"})
 ```
 
 ## Benefits of MCP Integration

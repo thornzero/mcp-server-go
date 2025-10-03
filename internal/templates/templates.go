@@ -9,10 +9,10 @@ import (
 	"text/template"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
-	"github.com/thornzero/mcp-server-go/internal/markdown"
-	"github.com/thornzero/mcp-server-go/internal/models"
-	"github.com/thornzero/mcp-server-go/internal/server"
-	"github.com/thornzero/mcp-server-go/internal/types"
+	"github.com/thornzero/project-manager/internal/markdown"
+	"github.com/thornzero/project-manager/internal/models"
+	"github.com/thornzero/project-manager/internal/server"
+	"github.com/thornzero/project-manager/internal/types"
 )
 
 type TemplatesHandler struct {

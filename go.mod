@@ -1,4 +1,4 @@
-module github.com/thornzero/mcp-server-go
+module github.com/thornzero/project-manager
 
 go 1.25.1
 

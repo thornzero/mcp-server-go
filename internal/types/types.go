@@ -228,6 +228,34 @@ type PreferredTool struct {
 	UpdatedAt   string `json:"updated_at" jsonschema:"Last update timestamp"`
 }
 
+// Documentation management inputs and outputs
+type DocsGetInput struct {
+	Package string `json:"package" jsonschema:"Go package path or symbol (e.g., 'internal/goals' or 'internal/goals.GoalsHandler.GoalsList')"`
+}
+
+type DocsGetOutput struct {
+	Package       string `json:"package" jsonschema:"The package or symbol that was documented"`
+	Documentation string `json:"documentation" jsonschema:"Generated documentation content"`
+}
+
+type DocsListInput struct {
+	Filter string `json:"filter,omitempty" jsonschema:"Optional filter to search for specific packages"`
+}
+
+type DocsListOutput struct {
+	Packages []string `json:"packages" jsonschema:"List of available Go packages"`
+	Count    int      `json:"count" jsonschema:"Total number of packages found"`
+}
+
+type DocsGenerateInput struct {
+	Format string `json:"format,omitempty" jsonschema:"Documentation format to generate (markdown, html, or empty for all)"`
+}
+
+type DocsGenerateOutput struct {
+	Files  []string `json:"files" jsonschema:"List of generated documentation files"`
+	Status string   `json:"status" jsonschema:"Generation status message"`
+}
+
 type PreferredToolsListInput struct {
 	Category string `json:"category,omitempty" jsonschema:"Filter by tool category (optional)"`
 	Language string `json:"language,omitempty" jsonschema:"Filter by programming language (optional)"`

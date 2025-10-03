@@ -1,4 +1,4 @@
-// /home/thornzero/Repositories/mcp-server-go/internal/logparser/logparser.go
+// /home/thornzero/Repositories/project-manager/internal/logparser/logparser.go
 package logparser
 
 import (
@@ -13,7 +13,7 @@ import (
 	"time"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
-	"github.com/thornzero/mcp-server-go/internal/types"
+	"github.com/thornzero/project-manager/internal/types"
 )
 
 // LogParserHandler handles log parsing operations

@@ -35,8 +35,8 @@ The MCP server uses `mcp.StdioTransport{}` which means:
    // In Cursor settings, ensure MCP server is configured
    {
      "mcp.servers": {
-       "mcp-server-go": {
-         "command": "/home/thornzero/Repositories/mcp-server-go/build/mcp-server",
+       "project-manager": {
+         "command": "/home/thornzero/Repositories/project-manager/build/mcp-server",
          "args": []
        }
      }
@@ -59,17 +59,17 @@ ps aux | grep mcp-server
 
 ```bash
 # Check if database exists and has content
-ls -la /home/thornzero/Repositories/mcp-server-go/.agent/state.db
+ls -la /home/thornzero/Repositories/project-manager/.agent/state.db
 
 # Check database size (should be > 0)
-du -h /home/thornzero/Repositories/mcp-server-go/.agent/state.db
+du -h /home/thornzero/Repositories/project-manager/.agent/state.db
 ```
 
 ### **Solution 4: Rebuild MCP Server**
 
 ```bash
-cd /home/thornzero/Repositories/mcp-server-go
-go build -o build/mcp-server ./cmd/mcp-server-go
+cd /home/thornzero/Repositories/project-manager
+go build -o build/mcp-server ./cmd/project-manager
 ```
 
 ### **Solution 5: Test MCP Server Manually**
@@ -124,9 +124,9 @@ echo '{"jsonrpc": "2.0", "id": 1, "method": "tools/list"}' | ./build/mcp-server
 ## 🚀 **Working Configuration**
 
 ### **Successful Setup:**
-1. **MCP Server Binary**: `/home/thornzero/Repositories/mcp-server-go/build/mcp-server`
-2. **Database**: `/home/thornzero/Repositories/mcp-server-go/.agent/state.db`
-3. **Project Root**: `/home/thornzero/Repositories/mcp-server-go`
+1. **MCP Server Binary**: `/home/thornzero/Repositories/project-manager/build/mcp-server`
+2. **Database**: `/home/thornzero/Repositories/project-manager/.agent/state.db`
+3. **Project Root**: `/home/thornzero/Repositories/project-manager`
 4. **Transport**: stdio (not HTTP)
 
 ### **Expected Behavior:**
@@ -156,7 +156,7 @@ echo '{"jsonrpc": "2.0", "id": 1, "method": "tools/list"}' | ./build/mcp-server
 1. **Check Connection:**
    ```javascript
    // Try a simple tool call
-   mcp_mcp-server-go_goals_list()
+   mcp_project-manager_goals_list()
    ```
 
 2. **Restart Cursor** if connection fails
@@ -170,8 +170,8 @@ echo '{"jsonrpc": "2.0", "id": 1, "method": "tools/list"}' | ./build/mcp-server
 
 5. **Test Basic Functionality:**
    ```javascript
-   mcp_mcp-server-go_goals_add({ title: "Test Goal" })
-   mcp_mcp-server-go_goals_list()
+   mcp_project-manager_goals_add({ title: "Test Goal" })
+   mcp_project-manager_goals_list()
    ```
 
 ## 📊 **Success Indicators**

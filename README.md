@@ -1,6 +1,6 @@
-# MCP Server Go
+# Project Manager
 
-A comprehensive Model Context Protocol (MCP) server implementation in Go that provides project management, documentation, and markdown tools for any project.
+A comprehensive Model Context Protocol (MCP) server that provides project management, documentation, and development tools for any project.
 
 ## Features
 
@@ -33,9 +33,9 @@ A comprehensive Model Context Protocol (MCP) server implementation in Go that pr
 ### Build from Source
 
 ```bash
-git clone https://github.com/thornzero/mcp-server-go.git
-cd mcp-server-go
-go build -o mcp-server ./cmd/mcp-server-go
+git clone https://github.com/thornzero/project-manager.git
+cd project-manager
+go build -o project-manager ./cmd/project-manager
 ```
 
 ### Install markdownlint-cli (optional)
@@ -53,8 +53,8 @@ Add to your `~/.cursor/mcp.json`:
 ```json
 {
   "mcpServers": {
-    "mcp-server-go": {
-      "command": "/path/to/mcp-server-go/mcp-server",
+    "project-manager": {
+      "command": "/path/to/project-manager/project-manager",
       "transport": "stdio"
     }
   }
@@ -153,8 +153,8 @@ mcp-server template_apply \
 ### Project Structure
 
 ```text
-mcp-server-go/
-├── cmd/mcp-server-go/   # Main server entry point
+project-manager/
+├── cmd/project-manager/   # Main server entry point
 ├── schema.sql           # Database schema
 ├── go.mod              # Go module definition
 ├── README.md           # This file
@@ -167,7 +167,7 @@ mcp-server-go/
 
 1. Define input/output structs
 2. Implement handler function
-3. Register tool in cmd/mcp-server-go/main.go
+3. Register tool in cmd/project-manager/main.go
 4. Add to database schema if needed
 
 ### Testing

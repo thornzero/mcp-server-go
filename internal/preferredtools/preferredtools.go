@@ -1,4 +1,4 @@
-// /home/thornzero/Repositories/mcp-server-go/internal/preferredtools/preferredtools.go
+// /home/thornzero/Repositories/project-manager/internal/preferredtools/preferredtools.go
 package preferredtools
 
 import (
@@ -8,9 +8,9 @@ import (
 	"time"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
-	"github.com/thornzero/mcp-server-go/internal/models"
-	"github.com/thornzero/mcp-server-go/internal/server"
-	"github.com/thornzero/mcp-server-go/internal/types"
+	"github.com/thornzero/project-manager/internal/models"
+	"github.com/thornzero/project-manager/internal/server"
+	"github.com/thornzero/project-manager/internal/types"
 )
 
 type PreferredToolsHandler struct {

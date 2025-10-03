@@ -1,8 +1,8 @@
-# MCP Server Go Makefile
+# Project Manager MCP Server Makefile
 
 # Variables
-BINARY_NAME=mcp-server
-MAIN_PACKAGE=./cmd/mcp-server-go
+BINARY_NAME=project-manager
+MAIN_PACKAGE=./cmd/project-manager
 BUILD_DIR=build
 GO_VERSION=1.25.1
 
@@ -115,7 +115,7 @@ run: build
 .PHONY: install
 install: build
 	@echo "Installing $(BINARY_NAME) to GOPATH/bin..."
-	go install ./cmd/mcp-server-go
+	go install ./cmd/project-manager
 
 # Cross-compile for different platforms
 .PHONY: build-linux
@@ -155,18 +155,26 @@ check-tools:
 	@go version | grep -q "go$(GO_VERSION)" || { echo "Go version $(GO_VERSION) required"; exit 1; }
 	@echo "All required tools are installed"
 
-# Generate documentation
-.PHONY: docs
-docs:
-	@echo "Starting godoc server..."
-	@echo "Installing godoc if not available..."
-	@go install golang.org/x/tools/cmd/godoc@latest 2>/dev/null || true
-	@echo "Starting godoc at http://localhost:6060"
-	@export PATH="$$(go env GOPATH)/bin:$$PATH" && godoc -http=:6060 &
-	@echo "✅ Documentation server started!"
-	@echo "📖 Visit: http://localhost:6060"
-	@echo "🔍 Your package: http://localhost:6060/pkg/github.com/thornzero/mcp-server-go/"
-	@echo "🛑 To stop: kill the godoc process or press Ctrl+C"
+# Generate static documentation files
+.PHONY: docs-static
+docs-static:
+	@echo "Generating static documentation..."
+	@mkdir -p docs/generated
+	@echo "# Generated Documentation" > docs/generated/README.md
+	@echo "" >> docs/generated/README.md
+	@echo "This directory contains auto-generated documentation from Go source code comments." >> docs/generated/README.md
+	@echo "" >> docs/generated/README.md
+	@echo "## Package Documentation" >> docs/generated/README.md
+	@echo "" >> docs/generated/README.md
+	@for pkg in $$(go list ./internal/...); do \
+		echo "### $$pkg" >> docs/generated/README.md; \
+		echo "" >> docs/generated/README.md; \
+		echo '```' >> docs/generated/README.md; \
+		go doc $$pkg >> docs/generated/README.md; \
+		echo '```' >> docs/generated/README.md; \
+		echo "" >> docs/generated/README.md; \
+	done
+	@echo "Documentation generated in docs/generated/README.md"
 
 .PHONY: docs-modern
 docs-modern:
@@ -177,7 +185,7 @@ docs-modern:
 	@export PATH="$$(go env GOPATH)/bin:$$PATH" && pkgsite -http=:8080 &
 	@echo "✅ Modern documentation server started!"
 	@echo "📖 Visit: http://localhost:8080"
-	@echo "🔍 Your package: http://localhost:8080/github.com/thornzero/mcp-server-go"
+	@echo "🔍 Your package: http://localhost:8080/github.com/thornzero/project-manager"
 	@echo "🛑 To stop: kill the pkgsite process or press Ctrl+C"
 
 .PHONY: docs-build

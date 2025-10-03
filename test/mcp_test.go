@@ -12,7 +12,7 @@ import (
 // Test server setup
 func setupTestServer(t *testing.T) (*exec.Cmd, io.WriteCloser, io.ReadCloser) {
 	// Build server
-	buildCmd := exec.Command("sh", "-c", "cd .. && go build -o build/mcp-server ./cmd/mcp-server-go")
+	buildCmd := exec.Command("sh", "-c", "cd .. && go build -o build/project-manager ./cmd/project-manager")
 	if err := buildCmd.Run(); err != nil {
 		t.Fatal("Failed to build server:", err)
 	}

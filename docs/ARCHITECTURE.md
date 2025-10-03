@@ -5,7 +5,7 @@ This project has been refactored into a modular architecture for better maintain
 ## Project Structure
 
 ```
-mcp-server-go/
+project-manager/
 ├── cmd/
 │   └── mcp-server/          # Main application entry point
 │       └── main.go

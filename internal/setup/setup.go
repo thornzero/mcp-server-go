@@ -1,4 +1,4 @@
-// /home/thornzero/Repositories/mcp-server-go/internal/setup/setup.go
+// /home/thornzero/Repositories/project-manager/internal/setup/setup.go
 package setup
 
 import (
@@ -9,9 +9,9 @@ import (
 	"strings"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
-	"github.com/thornzero/mcp-server-go/internal/markdown"
-	"github.com/thornzero/mcp-server-go/internal/server"
-	"github.com/thornzero/mcp-server-go/internal/types"
+	"github.com/thornzero/project-manager/internal/markdown"
+	"github.com/thornzero/project-manager/internal/server"
+	"github.com/thornzero/project-manager/internal/types"
 )
 
 type SetupHandler struct {
